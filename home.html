@@ -13,6 +13,26 @@
       font-family: Arial, sans-serif;
       background:#120424;
     }
+    .musicBtn{
+  position: fixed;
+  top: 14px;
+  right: 14px;
+  z-index: 9999;
+  width: 52px;
+  height: 52px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.25);
+  background: rgba(255,255,255,0.14);
+  color: white;
+  font-size: 22px;
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+}
+
+.musicBtn:hover{
+  transform: scale(1.05);
+}
+
 
     /* Fireworks canvas */
     canvas{
@@ -108,6 +128,10 @@
 
   <!-- fireworks -->
   <canvas id="fx"></canvas>
+  <audio id="bgMusic" src="song.mp3" loop></audio>
+
+<button id="musicBtn" class="musicBtn">🔊</button>
+
 
   <!-- design -->
   <div class="wrap">
@@ -226,6 +250,40 @@
       e.stopPropagation();
       window.location.href = "photos.html";
     });
+    // 🎶 Music
+const bgMusic = document.getElementById("bgMusic");
+const musicBtn = document.getElementById("musicBtn");
+
+let musicStarted = false;
+
+async function startMusic(){
+  try{
+    await bgMusic.play();
+    musicStarted = true;
+    musicBtn.textContent = "🔇";
+  }catch(err){
+    console.log("Music blocked until click");
+  }
+}
+
+// start music on first click anywhere (so browser allows it)
+document.addEventListener("click", () => {
+  if(!musicStarted) startMusic();
+}, { once: true });
+
+// toggle button
+musicBtn.addEventListener("click", async (e) => {
+  e.stopPropagation();
+
+  if(bgMusic.paused){
+    await bgMusic.play();
+    musicBtn.textContent = "🔇";
+  }else{
+    bgMusic.pause();
+    musicBtn.textContent = "🔊";
+  }
+});
+
   </script>
 
 </body>
