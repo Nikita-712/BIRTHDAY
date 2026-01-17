@@ -70,3 +70,15 @@ function update(){
 
 update();
 setInterval(update, 1000);
+// 🔒 Nikita test unlock button
+const SECRET_PASSWORD = "nikita";   // ✅ change this to whatever you want
+
+document.getElementById("unlockBtn")?.addEventListener("click", () => {
+  const pass = prompt("Password:");
+  if (pass === SECRET_PASSWORD) {
+    window.location.href = UNLOCK_URL; // opens birthday.html
+  } else {
+    alert("Wrong password");
+  }
+});
+
