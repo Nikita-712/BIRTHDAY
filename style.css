@@ -56,8 +56,8 @@ body{
 }
 
 /* HOURS box 1 + 2 */
-.d1{ left: 28.2%; top: 55%; }  
-.d2{ left: 55.0%; top: 55%; }  
+.d1{ left: 28.2%; top: 65%; }  
+.d2{ left: 55.0%; top: 65%; }  
 
 /* MINUTES box 1 + 2 */
 .d3{ left: 56.0%; top: 71.5%; }  
