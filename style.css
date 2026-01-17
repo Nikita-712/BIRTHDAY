@@ -1,10 +1,15 @@
-*{ margin:0; padding:0; box-sizing:border-box; }
+/* Reset */
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
 body{
-  min-height:100vh;
-  display:flex;
-  justify-content:center;
-  align-items:center;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 
   background-image: url("bg.png");
   background-size: cover;
@@ -13,59 +18,52 @@ body{
 
   font-family: Arial, sans-serif;
   padding: 30px 10px;
-
 }
 
-/* wrapper */
+/* Main wrapper */
 .design{
-  position: relative;
-  width: min(400px, 70vw);
+  position: relative;                 /* ✅ important for overlay */
+  width: min(650px, 85vw);            /* ✅ good size (not too tiny) */
 }
 
-/* your canva design image */
+/* Canva counter image */
 .design-img{
   width: 100%;
   height: auto;
-  display:block;
+  display: block;
   border-radius: 12px;
 }
 
-/* overlay area */
+/* Overlay area */
 .digits{
-  position:absolute;
+  position: absolute;
   inset: 0;
-  pointer-events:none;
+  pointer-events: none;
 }
 
-/* digit styling */
+/* Digit styling */
 .digit{
+  position: absolute;
   font-weight: 900;
-  font-size: clamp(18px, 2.2vw, 34px);
-  width: 1ch;
-  text-align: center;
+  font-size: clamp(18px, 2.2vw, 32px);
   color: #1f1f27;
   line-height: 1;
-  text-shadow: 0 1px 0 rgba(255,255,255,0.35);
-  transform: translateY(-2px);
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.35);
+
+  /* ✅ makes each digit centered perfectly at its coordinate */
+  transform: translate(-50%, -50%);
 }
 
+/* ✅ POSITIONING: Center of each box */
 
+/* HOURS box 1 + 2 */
+.d1{ left: 38.9%; top: 60.5%; }   /* h1 */
+.d2{ left: 45.7%; top: 60.5%; }   /* h2 */
 
+/* MINUTES box 1 + 2 */
+.d3{ left: 57.6%; top: 60.5%; }   /* m1 */
+.d4{ left: 64.4%; top: 60.5%; }   /* m2 */
 
-
-/* each pair of digits */
-.pair{
-  position:absolute;
-  width: 14.5%;              /* ✅ important: fixed group width */
-  display:flex;
-  justify-content:space-between;   /* ✅ auto centers digits in both boxes */
-  align-items:center;
-}
-
-
-
-/* 🔥 Positioning (we can adjust if needed) */
-#hh{ left: 20.8%; top: 50.5%; }
-#mm{ left: 49.2%; top: 50.5%; }
-#ss{ left: 77.6%; top: 50.5%; }
-
+/* SECONDS box 1 + 2 */
+.d5{ left: 76.4%; top: 60.5%; }   /* s1 */
+.d6{ left: 83.2%; top: 60.5%; }   /* s2 */
