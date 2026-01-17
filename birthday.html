@@ -12,26 +12,66 @@
     video{
       width: 100vw;
       height: 100vh;
-      object-fit: cover;  /* fills full screen nicely */
+      object-fit: cover;
       display: block;
+    }
+
+    /* Play overlay */
+    #overlay{
+      position: fixed;
+      inset: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: rgba(0,0,0,0.6);
+      z-index: 10;
+    }
+
+    #playBtn{
+      padding: 14px 22px;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      font-weight: 900;
+      font-size: 16px;
+      color: white;
+      background: rgba(255,255,255,0.18);
+      backdrop-filter: blur(10px);
+    }
+
+    #playBtn:hover{
+      transform: scale(1.03);
     }
   </style>
 </head>
 
 <body>
 
-  <!-- Full screen intro video -->
-  <video id="introVideo" src="intro.mp4" autoplay playsinline></video>
+  <!-- Video (no autoplay now, we will play after click) -->
+  <video id="introVideo" src="intro.mp4" playsinline></video>
+
+  <!-- Overlay that forces click -->
+  <div id="overlay">
+    <button id="playBtn">▶ Play</button>
+  </div>
 
   <script>
     const video = document.getElementById("introVideo");
+    const overlay = document.getElementById("overlay");
+    const playBtn = document.getElementById("playBtn");
 
-    // If autoplay is blocked, first click will start it
-    document.addEventListener("click", () => {
-      if (video.paused) video.play().catch(()=>{});
-    }, { once: true });
+    playBtn.addEventListener("click", async () => {
+      overlay.style.display = "none";
 
-    // When video ends -> go to next page
+      try {
+        await video.play(); // ✅ sound guaranteed after click
+      } catch (e) {
+        overlay.style.display = "flex";
+        alert("Tap Play again");
+      }
+    });
+
+    // after video ends -> go to home page
     video.addEventListener("ended", () => {
       window.location.href = "home.html";
     });
