@@ -1,0 +1,56 @@
+*{ margin:0; padding:0; box-sizing:border-box; }
+
+body{
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+
+  background-image: url("bg.png");
+  background-size: cover;
+  background-repeat: repeat;
+  background-position: center;
+
+  font-family: Arial, sans-serif;
+}
+
+/* wrapper */
+.design{
+  position: relative;
+  width: min(1100px, 95vw);
+}
+
+/* your canva design image */
+.design-img{
+  width: 100%;
+  height: auto;
+  display:block;
+  border-radius: 12px;
+}
+
+/* overlay area */
+.digits{
+  position:absolute;
+  inset: 0;
+  pointer-events:none;
+}
+
+/* digit styling */
+.digit{
+  font-weight: 900;
+  font-size: clamp(46px, 5vw, 78px);
+  color: #1f1f27;
+  text-shadow: 0 2px 0 rgba(255,255,255,0.45);
+}
+
+/* each pair of digits */
+.pair{
+  position:absolute;
+  display:flex;
+  gap: clamp(18px, 2.4vw, 32px);
+}
+
+/* 🔥 Positioning (we can adjust if needed) */
+#hh{ left: 16.5%; top: 55%; }
+#mm{ left: 46.0%; top: 55%; }
+#ss{ left: 74.7%; top: 55%; }
