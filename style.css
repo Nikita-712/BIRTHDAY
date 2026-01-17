@@ -56,14 +56,14 @@ body{
 }
 
 /* HOURS box 1 + 2 */
-.d1{ left: 33.2%; top: 70.5%; }  
-.d2{ left: 40.0%; top: 70.5%; }  
+.d1{ left: 23.2%; top: 69.5%; }  
+.d2{ left: 30.0%; top: 69.5%; }  
 
 /* MINUTES box 1 + 2 */
-.d3{ left: 52.0%; top: 70.5%; }  
-.d4{ left: 58.8%; top: 70.5%; }  
+.d3{ left: 48.0%; top: 69.5%; }  
+.d4{ left: 54.8%; top: 69.5%; }  
 
 /* SECONDS box 1 + 2 */
-.d5{ left: 72.8%; top: 70.5%; }  
-.d6{ left: 79.6%; top: 70.5%; }  
+.d5{ left: 70%; top: 69.5%; }  
+.d6{ left: 80%; top: 69.5%; }  
  
