@@ -19,7 +19,7 @@ body{
 /* wrapper */
 .design{
   position: relative;
-  width: min(500px, 80vw);
+  width: min(400px, 70vw);
 }
 
 /* your canva design image */
