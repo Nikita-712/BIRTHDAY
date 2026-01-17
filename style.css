@@ -54,16 +54,14 @@ body{
   transform: translate(-50%, -50%);
 }
 
-/* ✅ POSITIONING: Center of each box */
-
 /* HOURS box 1 + 2 */
-.d1{ left: 38.9%; top: 60.5%; }   /* h1 */
-.d2{ left: 45.7%; top: 60.5%; }   /* h2 */
+.d1{ left: 38.9%; top: 73%; }
+.d2{ left: 45.7%; top: 73%; }
 
 /* MINUTES box 1 + 2 */
-.d3{ left: 57.6%; top: 60.5%; }   /* m1 */
-.d4{ left: 64.4%; top: 60.5%; }   /* m2 */
+.d3{ left: 57.6%; top: 73%; }
+.d4{ left: 64.4%; top: 73%; }
 
 /* SECONDS box 1 + 2 */
-.d5{ left: 76.4%; top: 60.5%; }   /* s1 */
-.d6{ left: 83.2%; top: 60.5%; }   /* s2 */
+.d5{ left: 76.4%; top: 73%; }
+.d6{ left: 83.2%; top: 73%; }
