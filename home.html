@@ -1,11 +1,226 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Home</title>
+  <title>Happy Birthday 💜</title>
+
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{
+      height:100vh;
+      overflow:hidden;
+      font-family: Arial, sans-serif;
+      background:#1b0b3a;
+    }
+
+    /* Fireworks canvas */
+    canvas{
+      position:fixed;
+      inset:0;
+      z-index:0;
+      pointer-events:none;
+    }
+
+    /* Canva design image centered */
+    .wrap{
+      position:fixed;
+      inset:0;
+      z-index:2;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      padding: 10px;
+    }
+
+    .card{
+      position:relative;
+      width: min(1000px, 96vw);
+    }
+
+    .card img{
+      width:100%;
+      height:auto;
+      display:block;
+      border-radius: 18px;
+    }
+
+    /* Invisible clickable button zones */
+    .hotspot{
+      position:absolute;
+      border:none;
+      background: transparent;
+      cursor:pointer;
+
+      transition: transform 0.18s ease, filter 0.18s ease;
+      transform-origin: center;
+    }
+
+    /* hover = grow + glow */
+    .hotspot:hover{
+      transform: scale(1.12);
+      filter: drop-shadow(0 10px 18px rgba(255,255,255,0.35));
+    }
+
+    /* click = press */
+    .hotspot:active{
+      transform: scale(1.05);
+    }
+
+    /* Optional soft glow box when hovering */
+    .hotspot::after{
+      content:"";
+      position:absolute;
+      inset:-10px;
+      border-radius: 22px;
+      background: rgba(255,255,255,0.12);
+      opacity: 0;
+      transition: opacity 0.18s ease;
+    }
+    .hotspot:hover::after{
+      opacity: 1;
+    }
+
+    /* Button positions (hotspots) */
+    /* Adjust if needed after you test */
+
+    /* left icon: letter */
+    #btnLetter{
+      left: 24%;
+      top: 61%;
+      width: 15%;
+      height: 20%;
+    }
+
+    /* middle icon: gift/main website */
+    #btnGift{
+      left: 42.5%;
+      top: 58%;
+      width: 15%;
+      height: 24%;
+    }
+
+    /* right icon: book/photo book */
+    #btnBook{
+      left: 61%;
+      top: 59%;
+      width: 17%;
+      height: 23%;
+    }
+  </style>
 </head>
 
-<body style="margin:0; background:black;">
+<body>
+
+  <!-- fireworks -->
+  <canvas id="fx"></canvas>
+
+  <!-- design -->
+  <div class="wrap">
+    <div class="card">
+      <img src="home.png" alt="Home" />
+
+      <!-- invisible animated clickable hotspots -->
+      <button class="hotspot" id="btnLetter" title="Letter"></button>
+      <button class="hotspot" id="btnGift" title="Main Website"></button>
+      <button class="hotspot" id="btnBook" title="Photobook"></button>
+    </div>
+  </div>
+
+  <script>
+    // ---------------- FIREWORKS ----------------
+    const canvas = document.getElementById("fx");
+    const ctx = canvas.getContext("2d");
+
+    function resize(){
+      canvas.width = innerWidth;
+      canvas.height = innerHeight;
+    }
+    addEventListener("resize", resize);
+    resize();
+
+    const particles = [];
+    function rand(min,max){ return Math.random()*(max-min)+min; }
+
+    function burst(x,y){
+      const colors = ["#ff4d6d","#ffd166","#06d6a0","#4cc9f0","#c77dff","#f72585","#ffffff"];
+      const count = 150;
+
+      for(let i=0;i<count;i++){
+        const angle = Math.random()*Math.PI*2;
+        const speed = rand(2, 9);
+
+        particles.push({
+          x,y,
+          vx: Math.cos(angle)*speed,
+          vy: Math.sin(angle)*speed,
+          life: rand(55, 95),
+          color: colors[Math.floor(Math.random()*colors.length)],
+          size: rand(1.4, 3.6)
+        });
+      }
+    }
+
+    // automatic fireworks
+    setInterval(()=>{
+      burst(rand(innerWidth*0.15, innerWidth*0.85), rand(innerHeight*0.12, innerHeight*0.65));
+    }, 600);
+
+    function animate(){
+      ctx.fillStyle = "rgba(0,0,0,0.18)";
+      ctx.fillRect(0,0,canvas.width,canvas.height);
+
+      for(let i=particles.length-1;i>=0;i--){
+        const p = particles[i];
+
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vx *= 0.985;
+        p.vy *= 0.985;
+        p.vy += 0.04;
+        p.life -= 1;
+
+        ctx.beginPath();
+        ctx.fillStyle = p.color;
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI*2);
+        ctx.fill();
+
+        if(p.life<=0) particles.splice(i,1);
+      }
+
+      requestAnimationFrame(animate);
+    }
+    animate();
+
+    // click fireworks
+    function clickBurst(e){
+      const x = e.clientX ?? e.touches?.[0]?.clientX;
+      const y = e.clientY ?? e.touches?.[0]?.clientY;
+      if(x==null || y==null) return;
+
+      burst(x,y);
+      burst(x + rand(-20,20), y + rand(-20,20));
+    }
+
+    addEventListener("click", clickBurst);
+    addEventListener("touchstart", clickBurst, { passive: true });
+
+    // ---------------- BUTTON LINKS ----------------
+    document.getElementById("btnLetter").addEventListener("click", (e)=>{
+      e.stopPropagation();
+      window.location.href = "letter.html";
+    });
+
+    document.getElementById("btnGift").addEventListener("click", (e)=>{
+      e.stopPropagation();
+      window.location.href = "scroll.html"; // main website
+    });
+
+    document.getElementById("btnBook").addEventListener("click", (e)=>{
+      e.stopPropagation();
+      window.location.href = "photos.html"; // photobook
+    });
+  </script>
+
 </body>
 </html>
