@@ -40,22 +40,24 @@ body{
 /* digit styling */
 .digit{
   font-weight: 900;
-  font-size: clamp(28px, 3.2vw, 52px);
+  font-size: clamp(18px, 2.2vw, 34px);
   color: #1f1f27;
-  text-shadow: 0 2px 0 rgba(255,255,255,0.45);
+  line-height: 1;
 }
+
 
 
 /* each pair of digits */
 .pair{
   position:absolute;
   display:flex;
-  gap: clamp(18px, 2.4vw, 32px);
+  gap: clamp(10px, 1.1vw, 16px);
+  align-items:center;
 }
 
-/* 🔥 Positioning (we can adjust if needed) */
-#hh{ left: 18.5%; top: 49.5%; }
-#mm{ left: 47.2%; top: 49.5%; }
-#ss{ left: 75.4%; top: 49.5%; }
 
+/* 🔥 Positioning (we can adjust if needed) */
+#hh{ left: 18.8%; top: 50.8%; }
+#mm{ left: 47.9%; top: 50.8%; }
+#ss{ left: 76.2%; top: 50.8%; }
 
