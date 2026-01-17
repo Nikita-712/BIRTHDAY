@@ -6,63 +6,34 @@
   <title>Birthday</title>
 
   <style>
-    * { margin:0; padding:0; box-sizing:border-box; }
-    body { background:black; overflow:hidden; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: black; overflow: hidden; }
 
     video{
       width: 100vw;
       height: 100vh;
       object-fit: cover;
-      display:block;
-    }
-
-    /* ✅ PLAY OVERLAY */
-    #overlay{
-      position: fixed;
-      inset: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background: rgba(0,0,0,0.65);
-      z-index: 99999;
-    }
-
-    #playBtn{
-      padding: 16px 24px;
-      border-radius: 999px;
-      border: none;
-      cursor: pointer;
-      font-weight: 900;
-      font-size: 18px;
-      color: white;
-      background: rgba(255,255,255,0.18);
+      display: block;
     }
   </style>
 </head>
 
 <body>
 
-  <video id="introVideo" src="intro.mp4" playsinline></video>
-
-  <div id="overlay">
-    <button id="playBtn">▶ Play</button>
-  </div>
+  <!-- Fullscreen intro video -->
+  <video id="introVideo" src="intro.mp4" autoplay playsinline></video>
 
   <script>
     const video = document.getElementById("introVideo");
-    const overlay = document.getElementById("overlay");
-    const playBtn = document.getElementById("playBtn");
 
-    playBtn.addEventListener("click", async () => {
-      overlay.style.display = "none";
-      try {
-        await video.play(); // ✅ sound will work after click
-      } catch (e) {
-        overlay.style.display = "flex";
-        alert("Tap Play again");
-      }
-    });
+    // If autoplay is blocked, first click will start it
+    document.addEventListener("click", () => {
+      if (video.paused) video.play().catch(()=>{});
+      // also unmute attempt on click (some browsers)
+      video.muted = false;
+    }, { once: true });
 
+    // After video ends -> go to fireworks hub
     video.addEventListener("ended", () => {
       window.location.href = "home.html";
     });
@@ -70,4 +41,3 @@
 
 </body>
 </html>
-
