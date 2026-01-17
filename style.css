@@ -41,6 +41,8 @@ body{
 .digit{
   font-weight: 900;
   font-size: clamp(18px, 2.2vw, 34px);
+  width: 1ch;
+  text-align: center;
   color: #1f1f27;
   line-height: 1;
   text-shadow: 0 1px 0 rgba(255,255,255,0.35);
@@ -50,18 +52,20 @@ body{
 
 
 
+
 /* each pair of digits */
 .pair{
   position:absolute;
+  width: 14.5%;              /* ✅ important: fixed group width */
   display:flex;
-  gap: clamp(6px, 0.7vw, 10px);
+  justify-content:space-between;   /* ✅ auto centers digits in both boxes */
   align-items:center;
 }
 
 
 
 /* 🔥 Positioning (we can adjust if needed) */
-#hh{ left: 21.2%; top: 50.5%; }
-#mm{ left: 49.6%; top: 50.5%; }
-#ss{ left: 78.0%; top: 50.5%; }
+#hh{ left: 20.8%; top: 50.5%; }
+#mm{ left: 49.2%; top: 50.5%; }
+#ss{ left: 77.6%; top: 50.5%; }
 
