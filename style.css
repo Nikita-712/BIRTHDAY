@@ -43,7 +43,10 @@ body{
   font-size: clamp(18px, 2.2vw, 34px);
   color: #1f1f27;
   line-height: 1;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.35);
+  transform: translateY(-2px);
 }
+
 
 
 
@@ -51,13 +54,14 @@ body{
 .pair{
   position:absolute;
   display:flex;
-  gap: clamp(10px, 1.1vw, 16px);
+  gap: clamp(6px, 0.7vw, 10px);
   align-items:center;
 }
 
 
+
 /* 🔥 Positioning (we can adjust if needed) */
-#hh{ left: 18.8%; top: 50.8%; }
-#mm{ left: 47.9%; top: 50.8%; }
-#ss{ left: 76.2%; top: 50.8%; }
+#hh{ left: 21.2%; top: 50.5%; }
+#mm{ left: 49.6%; top: 50.5%; }
+#ss{ left: 78.0%; top: 50.5%; }
 
