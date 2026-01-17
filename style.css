@@ -40,10 +40,11 @@ body{
 /* digit styling */
 .digit{
   font-weight: 900;
-  font-size: clamp(46px, 5vw, 78px);
+  font-size: clamp(28px, 3.2vw, 52px);
   color: #1f1f27;
   text-shadow: 0 2px 0 rgba(255,255,255,0.45);
 }
+
 
 /* each pair of digits */
 .pair{
@@ -53,7 +54,8 @@ body{
 }
 
 /* 🔥 Positioning (we can adjust if needed) */
-#hh{ left: 17.5%; top: 58%; }
-#mm{ left: 46.7%; top: 58%; }
-#ss{ left: 75.2%; top: 58%; }
+#hh{ left: 18.5%; top: 49.5%; }
+#mm{ left: 47.2%; top: 49.5%; }
+#ss{ left: 75.4%; top: 49.5%; }
+
 
