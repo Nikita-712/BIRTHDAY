@@ -22,9 +22,10 @@ body{
 
 /* Main wrapper */
 .design{
-  position: relative;                 /* ✅ important for overlay */
-  width: min(650px, 85vw);            /* ✅ good size (not too tiny) */
+  position: relative;
+  width: min(400px, 70vw);
 }
+
 
 /* Canva counter image */
 .design-img{
