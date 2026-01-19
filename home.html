@@ -3,225 +3,327 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Home 🎆</title>
+  <title>Happy Birthday 💜</title>
 
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    *{margin:0;padding:0;box-sizing:border-box;}
 
-    body {
-      height: 100vh;
-      overflow: hidden;
-      background: url("home.png") no-repeat center center/cover;
+    body{
+      height:100vh;
+      overflow:hidden;
       font-family: Arial, sans-serif;
-      position: relative;
+      background:#120424;
     }
 
-    /* MAIN FRAME IMAGE (your purple/white design) */
-    .frame {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: min(1100px, 92vw);
-      height: auto;
-      border-radius: 25px;
-      overflow: hidden;
-      box-shadow: 0 25px 90px rgba(0,0,0,0.55);
-    }
-
-    .frame img {
-      width: 100%;
-      height: auto;
-      display: block;
-    }
-
-    /* BUTTONS ON TOP OF FRAME */
-    .btnRow {
-      position: absolute;
-      left: 50%;
-      bottom: 70px;                 /* position like your screenshot */
-      transform: translateX(-50%);
-      display: flex;
-      gap: 65px;
-      align-items: center;
-      justify-content: center;
-      width: 80%;
-      pointer-events: auto;
-    }
-
-    /* Pretty image buttons */
-    .imgBtn {
-      display: inline-block;
-      text-decoration: none;
-    }
-
-    .imgBtn img {
-      width: 130px;
-      height: auto;
-      display: block;
-      border-radius: 18px;
-
-      transition: 0.25s ease;
-      filter: drop-shadow(0 14px 28px rgba(0,0,0,0.35));
-      user-select: none;
-      -webkit-user-drag: none;
-    }
-
-    .imgBtn:hover img {
-      transform: translateY(-7px) scale(1.05);
-      filter: drop-shadow(0 18px 40px rgba(0,0,0,0.45));
-    }
-
-    .imgBtn:active img {
-      transform: scale(0.96);
-    }
-
-    /* Fix book button being small */
-    .imgBtn.book img {
-      width: 150px; /* bigger book */
-    }
-
-    /* Music toggle (volume icon button) */
-    .musicBtn {
+    /* ✅ Aesthetic music button */
+    .sound-btn{
       position: fixed;
       top: 18px;
       right: 18px;
-      width: 55px;
-      height: 55px;
-      border-radius: 50%;
+      z-index: 99999;
+
+      width: 52px;
+      height: 52px;
+      border-radius: 999px;
+
+      display:flex;
+      align-items:center;
+      justify-content:center;
+
       border: 1px solid rgba(255,255,255,0.25);
-      background: rgba(0,0,0,0.35);
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      background: rgba(140, 80, 255, 0.18);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+
       cursor: pointer;
-      z-index: 999;
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      transition: 0.2s;
+      transition: transform 0.2s ease, background 0.2s ease;
+      box-shadow: 0 18px 45px rgba(0,0,0,0.35);
     }
 
-    .musicBtn:hover {
+    .sound-btn:hover{
+      transform: scale(1.08);
+      background: rgba(140, 80, 255, 0.28);
+    }
+
+    .sound-btn:active{
+      transform: scale(0.96);
+    }
+
+    #soundIcon{
+      font-size: 22px;
+      filter: drop-shadow(0 8px 16px rgba(0,0,0,0.35));
+      user-select:none;
+    }
+
+    /* muted look */
+    .sound-btn.muted{
+      background: rgba(0,0,0,0.22);
+    }
+    .sound-btn.muted #soundIcon{
+      opacity: 0.75;
+    }
+
+    /* Fireworks canvas */
+    canvas{
+      position:fixed;
+      inset:0;
+      z-index:0;
+      pointer-events:none;
+    }
+
+    /* Canva card center */
+    .wrap{
+      position:fixed;
+      inset:0;
+      z-index:2;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      padding: 10px;
+    }
+
+    .card{
+      position:relative;
+      width: min(900px, 95vw);
+    }
+
+    .cardImg{
+      width:100%;
+      height:auto;
+      display:block;
+      border-radius: 18px;
+      box-shadow: 0 25px 70px rgba(0,0,0,0.35);
+    }
+
+    /* -------- BUTTON ICONS -------- */
+    .btnIcon{
+      position:absolute;
+      cursor:pointer;
+      border:none;
+      background:transparent;
+      padding:0;
+      transition: transform 0.18s ease, filter 0.18s ease;
+      transform-origin:center;
+    }
+
+    .btnIcon img{
+      width:100%;
+      height:100%;
+      object-fit: contain;
+      display:block;
+    }
+
+    /* hover */
+    .btnIcon:hover{
+      transform: scale(1.14);
+      filter: drop-shadow(0 18px 25px rgba(255,255,255,0.35));
+    }
+
+    /* click */
+    .btnIcon:active{
       transform: scale(1.06);
     }
 
-    .musicBtn span {
-      font-size: 24px;
-      color: white;
-      opacity: 0.9;
+    /* Button positions */
+    #btnLetter{
+      left: 25.5%;
+      top: 64%;
+      width: 13%;
+      height: 20%;
     }
 
-    /* Firework effect */
-    .firework {
-      position: absolute;
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      pointer-events: none;
-      animation: boom 850ms ease-out forwards;
-      z-index: 9999;
+    #btnGift{
+      left: 43.5%;
+      top: 61%;
+      width: 13%;
+      height: 20%;
     }
 
-    @keyframes boom {
-      from { transform: scale(0.8); opacity: 1; }
-      to   { transform: scale(14); opacity: 0; }
-    }
-
-    /* Responsive */
-    @media (max-width: 650px) {
-      .btnRow { gap: 25px; bottom: 50px; width: 95%; }
-      .imgBtn img { width: 105px; }
-      .imgBtn.book img { width: 120px; }
+    #btnBook{
+      left: 61.5%;
+      top: 62%;
+      width: 13%;
+      height: 20%;
     }
   </style>
 </head>
 
 <body>
 
-  <!-- Music -->
-  <audio id="bgMusic" src="song.mp3" autoplay loop></audio>
+  <!-- fireworks -->
+  <canvas id="fx"></canvas>
 
-  <!-- Volume button -->
-  <div class="musicBtn" onclick="toggleMusic()" title="Music">
-    <span id="volIcon">🔊</span>
-  </div>
+  <!-- music -->
+  <audio id="bgMusic" src="song.mp3" loop></audio>
 
-  <!-- Frame -->
-  <div class="frame" onclick="makeFirework(event)">
-    <!-- THIS SHOWS YOUR BANNER + background -->
-    <img src="bg.png" alt="Birthday Banner">
+  <!-- ✅ aesthetic button -->
+  <button id="soundBtn" class="sound-btn" aria-label="Toggle Music">
+    <span id="soundIcon">🔊</span>
+  </button>
 
-    <!-- Buttons -->
-    <div class="btnRow">
-      <a href="letter.html" class="imgBtn">
+  <!-- design -->
+  <div class="wrap">
+    <div class="card">
+
+      <!-- main design -->
+      <img src="home.png" class="cardImg" alt="Home" />
+
+      <!-- animated icon buttons -->
+      <button class="btnIcon" id="btnLetter" title="Letter">
         <img src="btn-letter.png" alt="Letter">
-      </a>
+      </button>
 
-      <a href="photos.html" class="imgBtn">
+      <button class="btnIcon" id="btnGift" title="Website">
         <img src="btn-gift.png" alt="Gift">
-      </a>
+      </button>
 
-      <a href="scroll.html" class="imgBtn book">
+      <button class="btnIcon" id="btnBook" title="Photobook">
         <img src="btn-book.png" alt="Book">
-      </a>
+      </button>
+
     </div>
   </div>
 
   <script>
-    const music = document.getElementById("bgMusic");
-    const volIcon = document.getElementById("volIcon");
+    // ---------------- FIREWORKS ----------------
+    const canvas = document.getElementById("fx");
+    const ctx = canvas.getContext("2d");
+
+    function resize(){
+      canvas.width = innerWidth;
+      canvas.height = innerHeight;
+    }
+    addEventListener("resize", resize);
+    resize();
+
+    const particles = [];
+    function rand(min,max){ return Math.random()*(max-min)+min; }
+
+    function burst(x,y){
+      const colors = ["#ff4d6d","#ffd166","#06d6a0","#4cc9f0","#c77dff","#f72585","#ffffff"];
+      const count = 70;
+
+      for(let i=0;i<count;i++){
+        const angle = Math.random()*Math.PI*2;
+        const speed = rand(1.5, 6.5);
+
+        particles.push({
+          x,y,
+          vx: Math.cos(angle)*speed,
+          vy: Math.sin(angle)*speed,
+          life: rand(40, 70),
+          color: colors[Math.floor(Math.random()*colors.length)],
+          size: rand(0.8, 2.0)
+        });
+      }
+    }
+
+    setInterval(()=>{
+      burst(rand(innerWidth*0.08, innerWidth*0.92), rand(innerHeight*0.08, innerHeight*0.85));
+    }, 320);
+
+    function animate(){
+      ctx.fillStyle = "rgba(0,0,0,0.20)";
+      ctx.fillRect(0,0,canvas.width,canvas.height);
+
+      for(let i=particles.length-1;i>=0;i--){
+        const p = particles[i];
+
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vx *= 0.985;
+        p.vy *= 0.985;
+        p.vy += 0.03;
+        p.life -= 1;
+
+        ctx.beginPath();
+        ctx.fillStyle = p.color;
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI*2);
+        ctx.fill();
+
+        if(p.life<=0) particles.splice(i,1);
+      }
+
+      requestAnimationFrame(animate);
+    }
+    animate();
+
+    function clickBurst(e){
+      const x = e.clientX ?? e.touches?.[0]?.clientX;
+      const y = e.clientY ?? e.touches?.[0]?.clientY;
+      if(x==null || y==null) return;
+
+      burst(x,y);
+      burst(x + rand(-35,35), y + rand(-35,35));
+      burst(x + rand(-55,55), y + rand(-55,55));
+    }
+
+    addEventListener("click", clickBurst);
+    addEventListener("touchstart", clickBurst, { passive: true });
+
+    // ---------------- BUTTON LINKS ----------------
+    document.getElementById("btnLetter").addEventListener("click", (e)=>{
+      e.stopPropagation();
+      window.location.href = "letter.html";
+    });
+
+    document.getElementById("btnGift").addEventListener("click", (e)=>{
+      e.stopPropagation();
+      window.location.href = "scroll.html";
+    });
+
+    document.getElementById("btnBook").addEventListener("click", (e)=>{
+      e.stopPropagation();
+      window.location.href = "photos.html";
+    });
+
+    // ---------------- 🎶 MUSIC ----------------
+    const bgMusic = document.getElementById("bgMusic");
+    const soundBtn = document.getElementById("soundBtn");
+    const soundIcon = document.getElementById("soundIcon");
+
+    let musicStarted = false;
     let isMuted = false;
 
-    // ✅ Music continues across pages
-    window.addEventListener("load", () => {
-      const savedTime = localStorage.getItem("musicTime");
-      const savedMuted = localStorage.getItem("musicMuted");
-
-      if (savedTime) music.currentTime = parseFloat(savedTime);
-
-      if (savedMuted === "true") {
-        isMuted = true;
-        music.pause();
-        volIcon.textContent = "🔇";
-      } else {
-        music.play().catch(()=>{});
-        volIcon.textContent = "🔊";
-      }
-    });
-
-    window.addEventListener("beforeunload", () => {
-      localStorage.setItem("musicTime", music.currentTime);
-      localStorage.setItem("musicMuted", isMuted ? "true" : "false");
-    });
-
-    function toggleMusic(){
-      if(music.paused){
-        music.play().catch(()=>{});
+    async function startMusic(){
+      try{
+        await bgMusic.play();
+        musicStarted = true;
         isMuted = false;
-        volIcon.textContent = "🔊";
-      } else {
-        music.pause();
-        isMuted = true;
-        volIcon.textContent = "🔇";
+        soundIcon.textContent = "🎵";
+        soundBtn.classList.remove("muted");
+      }catch(err){
+        console.log("Music blocked until click");
       }
     }
 
-    // ✅ Fireworks (not triggered on clicking buttons)
-    function makeFirework(e){
-      if(e.target.tagName === "IMG" || e.target.tagName === "A") return;
+    // Start music on first click anywhere
+    document.addEventListener("click", () => {
+      if(!musicStarted) startMusic();
+    }, { once: true });
 
-      const fw = document.createElement("div");
-      fw.className = "firework";
-      fw.style.left = (e.pageX - 5) + "px";
-      fw.style.top  = (e.pageY - 5) + "px";
+    // toggle button
+    soundBtn.addEventListener("click", async (e) => {
+      e.stopPropagation();
 
-      const colors = ["#ff4fd8","#a56bff","#00f5ff","#ffe26a","#7CFF6B","#ff6a6a"];
-      fw.style.background = colors[Math.floor(Math.random() * colors.length)];
-      fw.style.boxShadow = "0 0 22px " + fw.style.background;
+      // if not started, start it
+      if(!musicStarted){
+        await startMusic();
+        return;
+      }
 
-      document.body.appendChild(fw);
-      setTimeout(() => fw.remove(), 850);
-    }
+      isMuted = !isMuted;
+
+      if(isMuted){
+        bgMusic.pause();
+        soundIcon.textContent = "🔇";
+        soundBtn.classList.add("muted");
+      }else{
+        await bgMusic.play().catch(()=>{});
+        soundIcon.textContent = "🎵";
+        soundBtn.classList.remove("muted");
+      }
+    });
   </script>
 
 </body>
