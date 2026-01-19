@@ -19,20 +19,37 @@
       background:#120424;
     }
 
-    /* Back button */
+    /* ✅ Minimal aesthetic back button */
     .back{
       position: fixed;
-      top: 14px;
-      left: 14px;
+      top: 18px;
+      left: 18px;
       z-index: 9999;
-      padding: 10px 14px;
+
+      width: 44px;
+      height: 44px;
       border-radius: 999px;
+
+      display:flex;
+      align-items:center;
+      justify-content:center;
+
       text-decoration: none;
+      font-size: 20px;
       font-weight: 900;
-      background: rgba(255,255,255,0.18);
+
+      background: rgba(255,255,255,0.10);
       color: white;
-      border: 1px solid rgba(255,255,255,0.22);
-      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.20);
+
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+
+      transition: transform 0.18s ease, background 0.18s ease;
+    }
+    .back:hover{
+      transform: scale(1.06);
+      background: rgba(255,255,255,0.16);
     }
 
     /* INTRO ICON */
@@ -68,22 +85,26 @@
       scroll-behavior: smooth;
     }
 
-    /* Full background image */
+    /* ✅ Full image without cutting stickers */
     .letterBg{
       position: relative;
       width: 100vw;
       min-height: 100vh;
+
       background-image: url("letter-bg.png");
-      background-size: cover;
+      background-size: contain;          /* ✅ NO crop */
       background-position: center;
       background-repeat: no-repeat;
+
+      /* soft fill behind image */
+      background-color: #efe7dc;
     }
 
-    /* ✅ Writing area INSIDE beige blank space */
+    /* ✅ writing area inside beige blank region */
     .writingArea{
       position: absolute;
 
-      /* 🔥 adjust these if needed */
+      /* Adjust these 4 only if needed */
       left: 16%;
       top: 16%;
       width: 68%;
@@ -93,7 +114,15 @@
       color: #1f1f27;
       line-height: 1.75;
 
-      overflow: auto; /* scroll inside this box */
+      overflow: auto; /* scroll inside letter */
+
+      /* ✅ hide scrollbar but keep scrolling */
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+
+    .writingArea::-webkit-scrollbar{
+      display: none;
     }
 
     .title{
@@ -109,7 +138,7 @@
       white-space: pre-wrap;
     }
 
-    /* Mobile adjustment */
+    /* Mobile */
     @media (max-width: 600px){
       .writingArea{
         left: 10%;
@@ -122,7 +151,7 @@
       .typing{ font-size: 23px; }
     }
 
-    /* ------------------ CLICK HEARTS/FLOWERS ------------------ */
+    /* ------------------ Click hearts/flowers ------------------ */
     #particles{
       position: fixed;
       inset: 0;
@@ -143,9 +172,7 @@
         transform: translate(-50%, -50%) scale(0.6);
         opacity: 0;
       }
-      15%{
-        opacity: 1;
-      }
+      15%{ opacity: 1; }
       100%{
         transform: translate(-50%, -140px) scale(1.3);
         opacity: 0;
@@ -156,7 +183,7 @@
 
 <body>
 
-  <a class="back" href="home.html">← Back</a>
+  <a class="back" href="home.html">←</a>
 
   <!-- envelope intro -->
   <div id="intro">
@@ -211,7 +238,7 @@ Happy Birthday once again, my baby ❤️
 Nikita
     `.trim();
 
-    function typeText(text, speed = 18){
+    function typeText(text, speed = 45){
       let i = 0;
       typedText.textContent = "";
 
@@ -219,7 +246,6 @@ Nikita
         typedText.textContent += text[i];
         i++;
 
-        // auto scroll inside writing area while typing
         const writingArea = document.querySelector(".writingArea");
         writingArea.scrollTop = writingArea.scrollHeight;
 
@@ -235,21 +261,19 @@ Nikita
       setTimeout(() => {
         intro.style.display = "none";
         letterScreen.style.display = "block";
-        typeText(LETTER, 55);
+        typeText(LETTER, 45); // ✅ slower typing
       }, 850);
     }
 
-    // auto start
     window.addEventListener("load", () => {
       setTimeout(openLetter, 350);
     });
 
-    // allow click too
     icon.addEventListener("click", openLetter);
 
-    // 💗 Click hearts/flowers
+    // 💗 click hearts/flowers
     const particles = document.getElementById("particles");
-    const emojis = ["💗","💖","💕","🌸","🌷","🩷"];
+    const emojis = ["💗","💖","💕","🌸","🌷","💐","🩷"];
 
     function popParticle(x, y){
       const el = document.createElement("div");
@@ -278,3 +302,4 @@ Nikita
 
 </body>
 </html>
+
