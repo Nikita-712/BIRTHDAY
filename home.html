@@ -7,32 +7,61 @@
 
   <style>
     *{margin:0;padding:0;box-sizing:border-box;}
+
     body{
       height:100vh;
       overflow:hidden;
       font-family: Arial, sans-serif;
       background:#120424;
     }
-    .musicBtn{
-  position: fixed;
-  top: 14px;
-  right: 14px;
-  z-index: 9999;
-  width: 52px;
-  height: 52px;
-  border-radius: 999px;
-  border: 1px solid rgba(255,255,255,0.25);
-  background: rgba(255,255,255,0.14);
-  color: white;
-  font-size: 22px;
-  cursor: pointer;
-  backdrop-filter: blur(10px);
-}
 
-.musicBtn:hover{
-  transform: scale(1.05);
-}
+    /* ✅ Aesthetic music button */
+    .sound-btn{
+      position: fixed;
+      top: 18px;
+      right: 18px;
+      z-index: 99999;
 
+      width: 52px;
+      height: 52px;
+      border-radius: 999px;
+
+      display:flex;
+      align-items:center;
+      justify-content:center;
+
+      border: 1px solid rgba(255,255,255,0.25);
+      background: rgba(140, 80, 255, 0.18);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+
+      cursor: pointer;
+      transition: transform 0.2s ease, background 0.2s ease;
+      box-shadow: 0 18px 45px rgba(0,0,0,0.35);
+    }
+
+    .sound-btn:hover{
+      transform: scale(1.08);
+      background: rgba(140, 80, 255, 0.28);
+    }
+
+    .sound-btn:active{
+      transform: scale(0.96);
+    }
+
+    #soundIcon{
+      font-size: 22px;
+      filter: drop-shadow(0 8px 16px rgba(0,0,0,0.35));
+      user-select:none;
+    }
+
+    /* muted look */
+    .sound-btn.muted{
+      background: rgba(0,0,0,0.22);
+    }
+    .sound-btn.muted #soundIcon{
+      opacity: 0.75;
+    }
 
     /* Fireworks canvas */
     canvas{
@@ -42,7 +71,7 @@
       pointer-events:none;
     }
 
-    /* Canva card in center (smaller now) */
+    /* Canva card center */
     .wrap{
       position:fixed;
       inset:0;
@@ -54,10 +83,9 @@
     }
 
     .card{
-  position:relative;
-  width: min(900px, 95vw);  /* ✅ bigger */
-}
-
+      position:relative;
+      width: min(900px, 95vw);
+    }
 
     .cardImg{
       width:100%;
@@ -67,14 +95,13 @@
       box-shadow: 0 25px 70px rgba(0,0,0,0.35);
     }
 
-    /* -------- BUTTON ICONS (real images) -------- */
+    /* -------- BUTTON ICONS -------- */
     .btnIcon{
       position:absolute;
       cursor:pointer;
       border:none;
       background:transparent;
       padding:0;
-
       transition: transform 0.18s ease, filter 0.18s ease;
       transform-origin:center;
     }
@@ -86,41 +113,38 @@
       display:block;
     }
 
-    /* hover = bigger + drop shadow */
+    /* hover */
     .btnIcon:hover{
       transform: scale(1.14);
       filter: drop-shadow(0 18px 25px rgba(255,255,255,0.35));
     }
 
-    /* click = press */
+    /* click */
     .btnIcon:active{
       transform: scale(1.06);
     }
 
-    /* Button positioning over the design */
-    /* ✅ You can tweak these if needed */
+    /* Button positions */
     #btnLetter{
-  left: 25.5%;
-  top: 64%;
-  width: 13%;
-  height: 20%;
-}
+      left: 25.5%;
+      top: 64%;
+      width: 13%;
+      height: 20%;
+    }
 
-#btnGift{
-  left: 43.5%;
-  top: 61%;
-  width: 13%;
-  height: 20%;
-}
+    #btnGift{
+      left: 43.5%;
+      top: 61%;
+      width: 13%;
+      height: 20%;
+    }
 
-#btnBook{
-  left: 61.5%;
-  top: 62%;
-  width: 13%;
-  height: 20%;
-}
-
-
+    #btnBook{
+      left: 61.5%;
+      top: 62%;
+      width: 13%;
+      height: 20%;
+    }
   </style>
 </head>
 
@@ -128,10 +152,14 @@
 
   <!-- fireworks -->
   <canvas id="fx"></canvas>
+
+  <!-- music -->
   <audio id="bgMusic" src="song.mp3" loop></audio>
 
-<button id="musicBtn" class="musicBtn">🔊</button>
-
+  <!-- ✅ aesthetic button -->
+  <button id="soundBtn" class="sound-btn" aria-label="Toggle Music">
+    <span id="soundIcon">🔊</span>
+  </button>
 
   <!-- design -->
   <div class="wrap">
@@ -173,7 +201,7 @@
 
     function burst(x,y){
       const colors = ["#ff4d6d","#ffd166","#06d6a0","#4cc9f0","#c77dff","#f72585","#ffffff"];
-      const count = 70; /* ✅ more frequent, smaller bursts */
+      const count = 70;
 
       for(let i=0;i<count;i++){
         const angle = Math.random()*Math.PI*2;
@@ -185,12 +213,11 @@
           vy: Math.sin(angle)*speed,
           life: rand(40, 70),
           color: colors[Math.floor(Math.random()*colors.length)],
-          size: rand(0.8, 2.0) /* ✅ smaller particles */
+          size: rand(0.8, 2.0)
         });
       }
     }
 
-    // ✅ more fireworks, faster frequency
     setInterval(()=>{
       burst(rand(innerWidth*0.08, innerWidth*0.92), rand(innerHeight*0.08, innerHeight*0.85));
     }, 320);
@@ -221,7 +248,6 @@
     }
     animate();
 
-    // click fireworks (extra burst)
     function clickBurst(e){
       const x = e.clientX ?? e.touches?.[0]?.clientX;
       const y = e.clientY ?? e.touches?.[0]?.clientY;
@@ -250,42 +276,55 @@
       e.stopPropagation();
       window.location.href = "photos.html";
     });
-    // 🎶 Music
-const bgMusic = document.getElementById("bgMusic");
-const musicBtn = document.getElementById("musicBtn");
 
-let musicStarted = false;
+    // ---------------- 🎶 MUSIC ----------------
+    const bgMusic = document.getElementById("bgMusic");
+    const soundBtn = document.getElementById("soundBtn");
+    const soundIcon = document.getElementById("soundIcon");
 
-async function startMusic(){
-  try{
-    await bgMusic.play();
-    musicStarted = true;
-    musicBtn.textContent = "🔇";
-  }catch(err){
-    console.log("Music blocked until click");
-  }
-}
+    let musicStarted = false;
+    let isMuted = false;
 
-// start music on first click anywhere (so browser allows it)
-document.addEventListener("click", () => {
-  if(!musicStarted) startMusic();
-}, { once: true });
+    async function startMusic(){
+      try{
+        await bgMusic.play();
+        musicStarted = true;
+        isMuted = false;
+        soundIcon.textContent = "🎵";
+        soundBtn.classList.remove("muted");
+      }catch(err){
+        console.log("Music blocked until click");
+      }
+    }
 
-// toggle button
-musicBtn.addEventListener("click", async (e) => {
-  e.stopPropagation();
+    // Start music on first click anywhere
+    document.addEventListener("click", () => {
+      if(!musicStarted) startMusic();
+    }, { once: true });
 
-  if(bgMusic.paused){
-    await bgMusic.play();
-    musicBtn.textContent = "🔇";
-  }else{
-    bgMusic.pause();
-    musicBtn.textContent = "🔊";
-  }
-});
+    // toggle button
+    soundBtn.addEventListener("click", async (e) => {
+      e.stopPropagation();
 
+      // if not started, start it
+      if(!musicStarted){
+        await startMusic();
+        return;
+      }
+
+      isMuted = !isMuted;
+
+      if(isMuted){
+        bgMusic.pause();
+        soundIcon.textContent = "🔇";
+        soundBtn.classList.add("muted");
+      }else{
+        await bgMusic.play().catch(()=>{});
+        soundIcon.textContent = "🎵";
+        soundBtn.classList.remove("muted");
+      }
+    });
   </script>
 
 </body>
 </html>
-
