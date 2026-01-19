@@ -19,7 +19,7 @@
       background:#120424;
     }
 
-    /* ✅ Minimal aesthetic back button */
+    /* minimal aesthetic back button */
     .back{
       position: fixed;
       top: 18px;
@@ -85,71 +85,65 @@
       scroll-behavior: smooth;
     }
 
-    /* ✅ Full image without cutting stickers */
+    /* Full background */
     .letterBg{
-  position: relative;
-  width: 100vw;
-  min-height: 100vh;
+      position: relative;
+      width: 100vw;
+      min-height: 100vh;
+      background-image: url("letter-bg.png");
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
 
-  background-image: url("letter-bg.png");
-  background-size: cover;          /* ✅ like before */
-  background-position: center;     /* ✅ */
-  background-repeat: no-repeat;
-}
-}
-
-    /* ✅ writing area inside beige blank region */
+    /* ✅ RESPONSIVE perfect writing space */
     .writingArea{
       position: absolute;
 
-      /* Adjust these 4 only if needed */
-      left: 16%;
-      top: 16%;
-      width: 68%;
-      height: 72%;
+      /* ✅ FIXED corrected placement */
+      left: 14%;
+      top: 14%;
+      width: 72%;
+      height: 74%;
 
-      padding: 20px 20px;
+      padding: 18px 22px;
       color: #1f1f27;
-      line-height: 1.75;
+      line-height: 1.65;
 
-      overflow: auto; /* scroll inside letter */
+      overflow: auto;
 
-      /* ✅ hide scrollbar but keep scrolling */
       scrollbar-width: none;
       -ms-overflow-style: none;
     }
-
     .writingArea::-webkit-scrollbar{
-      display: none;
+      display:none;
     }
 
     .title{
       font-family: "Playfair Display", serif;
-      font-size: 30px;
+      font-size: clamp(22px, 3vw, 32px);
       font-weight: 800;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
     }
 
     .typing{
       font-family: "Caveat", cursive;
-      font-size: 26px;
+      font-size: clamp(20px, 2.3vw, 28px);
       white-space: pre-wrap;
     }
 
-    /* Mobile */
+    /* Mobile better */
     @media (max-width: 600px){
       .writingArea{
-        left: 10%;
+        left: 8%;
         top: 14%;
-        width: 80%;
-        height: 74%;
+        width: 84%;
+        height: 76%;
         padding: 14px 14px;
       }
-      .title{ font-size: 24px; }
-      .typing{ font-size: 23px; }
     }
 
-    /* ------------------ Click hearts/flowers ------------------ */
+    /* click particles */
     #particles{
       position: fixed;
       inset: 0;
@@ -183,12 +177,12 @@
 
   <a class="back" href="home.html">←</a>
 
-  <!-- envelope intro -->
+  <!-- intro -->
   <div id="intro">
     <img id="icon" src="letter-icon.png" alt="Letter Icon" />
   </div>
 
-  <!-- actual letter -->
+  <!-- letter -->
   <div id="letterScreen">
     <div class="letterBg">
       <div class="writingArea">
@@ -198,7 +192,7 @@
     </div>
   </div>
 
-  <!-- click particles layer -->
+  <!-- click hearts -->
   <div id="particles"></div>
 
   <script>
@@ -207,7 +201,6 @@
     const letterScreen = document.getElementById("letterScreen");
     const typedText = document.getElementById("typedText");
 
-    // filler letter for now
     const LETTER = `
 Happy Birthday, my love 💗
 
@@ -259,7 +252,7 @@ Nikita
       setTimeout(() => {
         intro.style.display = "none";
         letterScreen.style.display = "block";
-        typeText(LETTER, 45); // ✅ slower typing
+        typeText(LETTER, 45);
       }, 850);
     }
 
@@ -269,7 +262,7 @@ Nikita
 
     icon.addEventListener("click", openLetter);
 
-    // 💗 click hearts/flowers
+    // hearts/flowers click effect
     const particles = document.getElementById("particles");
     const emojis = ["💗","💖","💕","🌸","🌷","💐","🩷"];
 
