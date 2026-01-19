@@ -87,18 +87,16 @@
 
     /* ✅ Full image without cutting stickers */
     .letterBg{
-      position: relative;
-      width: 100vw;
-      min-height: 100vh;
+  position: relative;
+  width: 100vw;
+  min-height: 100vh;
 
-      background-image: url("letter-bg.png");
-      background-size: contain;          /* ✅ NO crop */
-      background-position: center;
-      background-repeat: no-repeat;
-
-      /* soft fill behind image */
-      background-color: #efe7dc;
-    }
+  background-image: url("letter-bg.png");
+  background-size: cover;          /* ✅ like before */
+  background-position: center;     /* ✅ */
+  background-repeat: no-repeat;
+}
+}
 
     /* ✅ writing area inside beige blank region */
     .writingArea{
