@@ -3,328 +3,262 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Happy Birthday 💜</title>
+  <title>Home 🎆</title>
 
   <style>
-    *{margin:0;padding:0;box-sizing:border-box;}
+    *{ margin:0; padding:0; box-sizing:border-box; }
 
     body{
-      height:100vh;
-      overflow:hidden;
-      font-family: Arial, sans-serif;
-      background:#120424;
+      font-family: "Poppins", Arial, sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+      background: url("home.png") no-repeat center center/cover;
+      position: relative;
     }
 
-    /* ✅ Aesthetic music button */
-    .sound-btn{
-      position: fixed;
-      top: 18px;
-      right: 18px;
-      z-index: 99999;
-
-      width: 52px;
-      height: 52px;
-      border-radius: 999px;
-
+    /* Dark overlay */
+    .overlay{
+      min-height: 100vh;
+      background: rgba(0,0,0,0.45);
       display:flex;
       align-items:center;
       justify-content:center;
-
-      border: 1px solid rgba(255,255,255,0.25);
-      background: rgba(140, 80, 255, 0.18);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-
-      cursor: pointer;
-      transition: transform 0.2s ease, background 0.2s ease;
-      box-shadow: 0 18px 45px rgba(0,0,0,0.35);
+      padding: 35px 15px;
     }
 
-    .sound-btn:hover{
-      transform: scale(1.08);
-      background: rgba(140, 80, 255, 0.28);
+    /* Premium glass card */
+    .glass{
+      width: min(980px, 95vw);
+      border-radius: 28px;
+      padding: 40px 30px;
+      background: rgba(255,255,255,0.10);
+      border: 1px solid rgba(255,255,255,0.18);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      box-shadow: 0 25px 70px rgba(0,0,0,0.45);
+      position: relative;
+      animation: fadeIn 0.9s ease;
     }
 
-    .sound-btn:active{
+    @keyframes fadeIn {
+      from{ opacity:0; transform: translateY(18px); }
+      to{ opacity:1; transform: translateY(0); }
+    }
+
+    /* Title banner image or text */
+    .topTitle{
+      text-align:center;
+      margin-bottom: 25px;
+      color: white;
+    }
+
+    .topTitle h1{
+      font-size: clamp(28px, 4vw, 52px);
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      text-shadow: 0 10px 30px rgba(0,0,0,0.35);
+    }
+
+    .topTitle p{
+      margin-top: 8px;
+      font-size: 16px;
+      opacity: 0.92;
+    }
+
+    /* Button row */
+    .btnRow{
+      display:flex;
+      justify-content:center;
+      gap: 34px;
+      flex-wrap: wrap;
+      margin-top: 28px;
+    }
+
+    /* Image buttons (PRETTY) */
+    .imgBtn{
+      display:inline-block;
+      text-decoration:none;
+      border-radius: 22px;
+    }
+
+    .imgBtn img{
+      width: 140px;
+      height: auto;
+      display:block;
+      border-radius: 22px;
+
+      transition: 0.25s ease;
+      transform: translateY(0);
+      filter: drop-shadow(0 14px 30px rgba(0,0,0,0.45));
+      user-select:none;
+      -webkit-user-drag:none;
+    }
+
+    .imgBtn img:hover{
+      transform: translateY(-7px) scale(1.05);
+      filter: drop-shadow(0 18px 40px rgba(0,0,0,0.55));
+    }
+
+    .imgBtn img:active{
       transform: scale(0.96);
     }
 
-    #soundIcon{
-      font-size: 22px;
-      filter: drop-shadow(0 8px 16px rgba(0,0,0,0.35));
-      user-select:none;
+    /* Small hint text */
+    .hint{
+      margin-top: 22px;
+      text-align:center;
+      color: rgba(255,255,255,0.85);
+      font-size: 14px;
+      opacity: 0.95;
     }
 
-    /* muted look */
-    .sound-btn.muted{
-      background: rgba(0,0,0,0.22);
-    }
-    .sound-btn.muted #soundIcon{
-      opacity: 0.75;
-    }
-
-    /* Fireworks canvas */
-    canvas{
-      position:fixed;
-      inset:0;
-      z-index:0;
-      pointer-events:none;
-    }
-
-    /* Canva card center */
-    .wrap{
-      position:fixed;
-      inset:0;
-      z-index:2;
+    /* Music toggle */
+    .musicBtn{
+      position: fixed;
+      top: 18px;
+      right: 18px;
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.25);
+      background: rgba(0,0,0,0.35);
       display:flex;
-      justify-content:center;
       align-items:center;
-      padding: 10px;
-    }
-
-    .card{
-      position:relative;
-      width: min(900px, 95vw);
-    }
-
-    .cardImg{
-      width:100%;
-      height:auto;
-      display:block;
-      border-radius: 18px;
-      box-shadow: 0 25px 70px rgba(0,0,0,0.35);
-    }
-
-    /* -------- BUTTON ICONS -------- */
-    .btnIcon{
-      position:absolute;
+      justify-content:center;
       cursor:pointer;
-      border:none;
-      background:transparent;
-      padding:0;
-      transition: transform 0.18s ease, filter 0.18s ease;
-      transform-origin:center;
+      z-index: 999;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      transition: 0.2s;
     }
 
-    .btnIcon img{
-      width:100%;
-      height:100%;
-      object-fit: contain;
-      display:block;
+    .musicBtn:hover{
+      transform: scale(1.05);
     }
 
-    /* hover */
-    .btnIcon:hover{
-      transform: scale(1.14);
-      filter: drop-shadow(0 18px 25px rgba(255,255,255,0.35));
+    .musicBtn img{
+      width: 26px;
+      height: 26px;
+      opacity: 0.9;
     }
 
-    /* click */
-    .btnIcon:active{
-      transform: scale(1.06);
+    /* Firework circles */
+    .firework{
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      pointer-events:none;
+      animation: boom 900ms ease-out forwards;
     }
 
-    /* Button positions */
-    #btnLetter{
-      left: 25.5%;
-      top: 64%;
-      width: 13%;
-      height: 20%;
+    @keyframes boom{
+      0%{ transform: scale(0.8); opacity: 1; }
+      100%{ transform: scale(14); opacity: 0; }
     }
 
-    #btnGift{
-      left: 43.5%;
-      top: 61%;
-      width: 13%;
-      height: 20%;
-    }
-
-    #btnBook{
-      left: 61.5%;
-      top: 62%;
-      width: 13%;
-      height: 20%;
+    /* Mobile tuning */
+    @media(max-width: 520px){
+      .imgBtn img{ width: 120px; }
+      .glass{ padding: 30px 18px; }
     }
   </style>
 </head>
 
 <body>
 
-  <!-- fireworks -->
-  <canvas id="fx"></canvas>
+  <!-- Music -->
+  <audio id="bgMusic" src="song.mp3" autoplay loop></audio>
 
-  <!-- music -->
-  <audio id="bgMusic" src="song.mp3" loop></audio>
+  <!-- Music toggle button -->
+  <div class="musicBtn" onclick="toggleMusic()">
+    <!-- icon: you can replace with your own png -->
+    <img id="musicIcon" src="letter-icon.png" alt="music">
+  </div>
 
-  <!-- ✅ aesthetic button -->
-  <button id="soundBtn" class="sound-btn" aria-label="Toggle Music">
-    <span id="soundIcon">🔊</span>
-  </button>
+  <div class="overlay" onclick="makeFirework(event)">
+    <div class="glass">
 
-  <!-- design -->
-  <div class="wrap">
-    <div class="card">
+      <div class="topTitle">
+        <h1>Happy Birthday 🎀</h1>
+        <p>Tap anywhere for fireworks ✨ and choose a surprise 💝</p>
+      </div>
 
-      <!-- main design -->
-      <img src="home.png" class="cardImg" alt="Home" />
+      <div class="btnRow">
+        <a href="letter.html" class="imgBtn">
+          <img src="btn-letter.png" alt="Letter">
+        </a>
 
-      <!-- animated icon buttons -->
-      <button class="btnIcon" id="btnLetter" title="Letter">
-        <img src="btn-letter.png" alt="Letter">
-      </button>
+        <a href="photos.html" class="imgBtn">
+          <img src="btn-gift.png" alt="Photos Gift">
+        </a>
 
-      <button class="btnIcon" id="btnGift" title="Website">
-        <img src="btn-gift.png" alt="Gift">
-      </button>
+        <a href="scroll.html" class="imgBtn">
+          <img src="btn-book.png" alt="Story">
+        </a>
+      </div>
 
-      <button class="btnIcon" id="btnBook" title="Photobook">
-        <img src="btn-book.png" alt="Book">
-      </button>
+      <div class="hint">Made with love 💗 by Nikita</div>
 
     </div>
   </div>
 
   <script>
-    // ---------------- FIREWORKS ----------------
-    const canvas = document.getElementById("fx");
-    const ctx = canvas.getContext("2d");
-
-    function resize(){
-      canvas.width = innerWidth;
-      canvas.height = innerHeight;
-    }
-    addEventListener("resize", resize);
-    resize();
-
-    const particles = [];
-    function rand(min,max){ return Math.random()*(max-min)+min; }
-
-    function burst(x,y){
-      const colors = ["#ff4d6d","#ffd166","#06d6a0","#4cc9f0","#c77dff","#f72585","#ffffff"];
-      const count = 70;
-
-      for(let i=0;i<count;i++){
-        const angle = Math.random()*Math.PI*2;
-        const speed = rand(1.5, 6.5);
-
-        particles.push({
-          x,y,
-          vx: Math.cos(angle)*speed,
-          vy: Math.sin(angle)*speed,
-          life: rand(40, 70),
-          color: colors[Math.floor(Math.random()*colors.length)],
-          size: rand(0.8, 2.0)
-        });
-      }
-    }
-
-    setInterval(()=>{
-      burst(rand(innerWidth*0.08, innerWidth*0.92), rand(innerHeight*0.08, innerHeight*0.85));
-    }, 320);
-
-    function animate(){
-      ctx.fillStyle = "rgba(0,0,0,0.20)";
-      ctx.fillRect(0,0,canvas.width,canvas.height);
-
-      for(let i=particles.length-1;i>=0;i--){
-        const p = particles[i];
-
-        p.x += p.vx;
-        p.y += p.vy;
-        p.vx *= 0.985;
-        p.vy *= 0.985;
-        p.vy += 0.03;
-        p.life -= 1;
-
-        ctx.beginPath();
-        ctx.fillStyle = p.color;
-        ctx.arc(p.x, p.y, p.size, 0, Math.PI*2);
-        ctx.fill();
-
-        if(p.life<=0) particles.splice(i,1);
-      }
-
-      requestAnimationFrame(animate);
-    }
-    animate();
-
-    function clickBurst(e){
-      const x = e.clientX ?? e.touches?.[0]?.clientX;
-      const y = e.clientY ?? e.touches?.[0]?.clientY;
-      if(x==null || y==null) return;
-
-      burst(x,y);
-      burst(x + rand(-35,35), y + rand(-35,35));
-      burst(x + rand(-55,55), y + rand(-55,55));
-    }
-
-    addEventListener("click", clickBurst);
-    addEventListener("touchstart", clickBurst, { passive: true });
-
-    // ---------------- BUTTON LINKS ----------------
-    document.getElementById("btnLetter").addEventListener("click", (e)=>{
-      e.stopPropagation();
-      window.location.href = "letter.html";
-    });
-
-    document.getElementById("btnGift").addEventListener("click", (e)=>{
-      e.stopPropagation();
-      window.location.href = "scroll.html";
-    });
-
-    document.getElementById("btnBook").addEventListener("click", (e)=>{
-      e.stopPropagation();
-      window.location.href = "photos.html";
-    });
-
-    // ---------------- 🎶 MUSIC ----------------
-    const bgMusic = document.getElementById("bgMusic");
-    const soundBtn = document.getElementById("soundBtn");
-    const soundIcon = document.getElementById("soundIcon");
-
-    let musicStarted = false;
+    const music = document.getElementById("bgMusic");
     let isMuted = false;
 
-    async function startMusic(){
-      try{
-        await bgMusic.play();
-        musicStarted = true;
+    // ✅ Music continues across pages
+    window.addEventListener("load", () => {
+      const savedTime = localStorage.getItem("musicTime");
+      const savedMuted = localStorage.getItem("musicMuted");
+
+      if (savedTime) music.currentTime = parseFloat(savedTime);
+
+      if (savedMuted === "true") {
+        isMuted = true;
+        music.pause();
+      } else {
+        music.play().catch(()=>{});
+      }
+    });
+
+    window.addEventListener("beforeunload", () => {
+      localStorage.setItem("musicTime", music.currentTime);
+      localStorage.setItem("musicMuted", isMuted ? "true" : "false");
+    });
+
+    function toggleMusic(){
+      if(music.paused){
+        music.play().catch(()=>{});
         isMuted = false;
-        soundIcon.textContent = "🎵";
-        soundBtn.classList.remove("muted");
-      }catch(err){
-        console.log("Music blocked until click");
+      } else {
+        music.pause();
+        isMuted = true;
       }
     }
 
-    // Start music on first click anywhere
-    document.addEventListener("click", () => {
-      if(!musicStarted) startMusic();
-    }, { once: true });
+    // ✅ Fireworks effect on click
+    function makeFirework(e){
+      // prevent clicking on buttons from creating fireworks
+      if(e.target.tagName === "IMG" || e.target.tagName === "A") return;
 
-    // toggle button
-    soundBtn.addEventListener("click", async (e) => {
-      e.stopPropagation();
+      const fw = document.createElement("div");
+      fw.className = "firework";
 
-      // if not started, start it
-      if(!musicStarted){
-        await startMusic();
-        return;
-      }
+      fw.style.left = (e.pageX - 6) + "px";
+      fw.style.top  = (e.pageY - 6) + "px";
 
-      isMuted = !isMuted;
+      // random bright color
+      const colors = ["#ff4fd8","#a56bff","#00f5ff","#ffe26a","#7CFF6B","#ff6a6a"];
+      fw.style.background = colors[Math.floor(Math.random() * colors.length)];
+      fw.style.boxShadow = "0 0 20px " + fw.style.background;
 
-      if(isMuted){
-        bgMusic.pause();
-        soundIcon.textContent = "🔇";
-        soundBtn.classList.add("muted");
-      }else{
-        await bgMusic.play().catch(()=>{});
-        soundIcon.textContent = "🎵";
-        soundBtn.classList.remove("muted");
-      }
-    });
+      document.body.appendChild(fw);
+
+      setTimeout(() => fw.remove(), 900);
+    }
   </script>
 
 </body>
 </html>
+
