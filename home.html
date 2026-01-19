@@ -9,110 +9,88 @@
     *{ margin:0; padding:0; box-sizing:border-box; }
 
     body{
-      font-family: "Poppins", Arial, sans-serif;
+      font-family: Arial, sans-serif;
       min-height: 100vh;
       overflow-x: hidden;
+      background: #000;
+    }
+
+    /* Background image */
+    .bg{
+      min-height: 100vh;
       background: url("home.png") no-repeat center center/cover;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
       position: relative;
     }
 
-    /* Dark overlay */
-    .overlay{
-      min-height: 100vh;
-      background: rgba(0,0,0,0.45);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding: 35px 15px;
-    }
-
-    /* Premium glass card */
-    .glass{
-      width: min(980px, 95vw);
+    /* The main card (like your previous look) */
+    .frame{
+      width: min(1100px, 96vw);
       border-radius: 28px;
-      padding: 40px 30px;
-      background: rgba(255,255,255,0.10);
-      border: 1px solid rgba(255,255,255,0.18);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      box-shadow: 0 25px 70px rgba(0,0,0,0.45);
+      overflow: hidden;
       position: relative;
       animation: fadeIn 0.9s ease;
+      box-shadow: 0 30px 90px rgba(0,0,0,0.55);
     }
 
-    @keyframes fadeIn {
+    @keyframes fadeIn{
       from{ opacity:0; transform: translateY(18px); }
       to{ opacity:1; transform: translateY(0); }
     }
 
-    /* Title banner image or text */
-    .topTitle{
-      text-align:center;
-      margin-bottom: 25px;
-      color: white;
+    /* Content image (your purple birthday frame design inside home.png already)
+       so we don't add extra headings or overlays */
+    .inside{
+      position: relative;
+      width: 100%;
+      height: auto;
     }
 
-    .topTitle h1{
-      font-size: clamp(28px, 4vw, 52px);
-      font-weight: 800;
-      letter-spacing: 0.5px;
-      text-shadow: 0 10px 30px rgba(0,0,0,0.35);
-    }
-
-    .topTitle p{
-      margin-top: 8px;
-      font-size: 16px;
-      opacity: 0.92;
-    }
-
-    /* Button row */
+    /* Buttons container over the image */
     .btnRow{
-      display:flex;
-      justify-content:center;
-      gap: 34px;
+      position: absolute;
+      left: 50%;
+      bottom: 17%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 42px;
+      justify-content: center;
       flex-wrap: wrap;
-      margin-top: 28px;
+      width: 90%;
+      pointer-events: auto;
     }
 
-    /* Image buttons (PRETTY) */
+    /* Pretty image buttons (NO ugly default) */
     .imgBtn{
-      display:inline-block;
-      text-decoration:none;
+      display: inline-block;
+      text-decoration: none;
       border-radius: 22px;
     }
 
     .imgBtn img{
-      width: 140px;
+      width: 130px;
       height: auto;
-      display:block;
+      display: block;
       border-radius: 22px;
-
       transition: 0.25s ease;
-      transform: translateY(0);
-      filter: drop-shadow(0 14px 30px rgba(0,0,0,0.45));
+      filter: drop-shadow(0 14px 30px rgba(0,0,0,0.35));
       user-select:none;
       -webkit-user-drag:none;
     }
 
     .imgBtn img:hover{
       transform: translateY(-7px) scale(1.05);
-      filter: drop-shadow(0 18px 40px rgba(0,0,0,0.55));
+      filter: drop-shadow(0 18px 40px rgba(0,0,0,0.45));
     }
 
     .imgBtn img:active{
       transform: scale(0.96);
     }
 
-    /* Small hint text */
-    .hint{
-      margin-top: 22px;
-      text-align:center;
-      color: rgba(255,255,255,0.85);
-      font-size: 14px;
-      opacity: 0.95;
-    }
-
-    /* Music toggle */
+    /* Music toggle button (top-right like screenshot) */
     .musicBtn{
       position: fixed;
       top: 18px;
@@ -133,7 +111,7 @@
     }
 
     .musicBtn:hover{
-      transform: scale(1.05);
+      transform: scale(1.06);
     }
 
     .musicBtn img{
@@ -142,7 +120,7 @@
       opacity: 0.9;
     }
 
-    /* Firework circles */
+    /* Fireworks circles */
     .firework{
       position: absolute;
       width: 12px;
@@ -150,6 +128,7 @@
       border-radius: 50%;
       pointer-events:none;
       animation: boom 900ms ease-out forwards;
+      z-index: 50;
     }
 
     @keyframes boom{
@@ -157,10 +136,10 @@
       100%{ transform: scale(14); opacity: 0; }
     }
 
-    /* Mobile tuning */
-    @media(max-width: 520px){
-      .imgBtn img{ width: 120px; }
-      .glass{ padding: 30px 18px; }
+    /* Responsive */
+    @media(max-width: 650px){
+      .btnRow{ gap: 22px; bottom: 14%; }
+      .imgBtn img{ width: 112px; }
     }
   </style>
 </head>
@@ -170,37 +149,33 @@
   <!-- Music -->
   <audio id="bgMusic" src="song.mp3" autoplay loop></audio>
 
-  <!-- Music toggle button -->
+  <!-- Music toggle -->
   <div class="musicBtn" onclick="toggleMusic()">
-    <!-- icon: you can replace with your own png -->
-    <img id="musicIcon" src="letter-icon.png" alt="music">
+    <img src="letter-icon.png" alt="music">
   </div>
 
-  <div class="overlay" onclick="makeFirework(event)">
-    <div class="glass">
+  <div class="bg" onclick="makeFirework(event)">
 
-      <div class="topTitle">
-        <h1>Happy Birthday 🎀</h1>
-        <p>Tap anywhere for fireworks ✨ and choose a surprise 💝</p>
-      </div>
+    <div class="frame">
+      <!-- Your design image is already in home.png -->
+      <img src="bg.png" class="inside" alt="birthday-frame" />
 
+      <!-- Buttons aligned like your screenshot -->
       <div class="btnRow">
         <a href="letter.html" class="imgBtn">
           <img src="btn-letter.png" alt="Letter">
         </a>
 
         <a href="photos.html" class="imgBtn">
-          <img src="btn-gift.png" alt="Photos Gift">
+          <img src="btn-gift.png" alt="Photos">
         </a>
 
         <a href="scroll.html" class="imgBtn">
           <img src="btn-book.png" alt="Story">
         </a>
       </div>
-
-      <div class="hint">Made with love 💗 by Nikita</div>
-
     </div>
+
   </div>
 
   <script>
@@ -237,9 +212,8 @@
       }
     }
 
-    // ✅ Fireworks effect on click
+    // ✅ Fireworks effect on click (but NOT when clicking buttons)
     function makeFirework(e){
-      // prevent clicking on buttons from creating fireworks
       if(e.target.tagName === "IMG" || e.target.tagName === "A") return;
 
       const fw = document.createElement("div");
@@ -248,17 +222,14 @@
       fw.style.left = (e.pageX - 6) + "px";
       fw.style.top  = (e.pageY - 6) + "px";
 
-      // random bright color
       const colors = ["#ff4fd8","#a56bff","#00f5ff","#ffe26a","#7CFF6B","#ff6a6a"];
       fw.style.background = colors[Math.floor(Math.random() * colors.length)];
       fw.style.boxShadow = "0 0 20px " + fw.style.background;
 
       document.body.appendChild(fw);
-
       setTimeout(() => fw.remove(), 900);
     }
   </script>
 
 </body>
 </html>
-
