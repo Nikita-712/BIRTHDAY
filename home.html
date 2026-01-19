@@ -6,140 +6,132 @@
   <title>Home 🎆</title>
 
   <style>
-    *{ margin:0; padding:0; box-sizing:border-box; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
-    body{
-      font-family: Arial, sans-serif;
-      min-height: 100vh;
-      overflow-x: hidden;
-      background: #000;
-    }
-
-    /* Background image */
-    .bg{
-      min-height: 100vh;
-      background: url("home.png") no-repeat center center/cover;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-      position: relative;
-    }
-
-    /* The main card (like your previous look) */
-    .frame{
-      width: min(1100px, 96vw);
-      border-radius: 28px;
+    body {
+      height: 100vh;
       overflow: hidden;
+      background: url("home.png") no-repeat center center/cover;
+      font-family: Arial, sans-serif;
       position: relative;
-      animation: fadeIn 0.9s ease;
-      box-shadow: 0 30px 90px rgba(0,0,0,0.55);
     }
 
-    @keyframes fadeIn{
-      from{ opacity:0; transform: translateY(18px); }
-      to{ opacity:1; transform: translateY(0); }
+    /* MAIN FRAME IMAGE (your purple/white design) */
+    .frame {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: min(1100px, 92vw);
+      height: auto;
+      border-radius: 25px;
+      overflow: hidden;
+      box-shadow: 0 25px 90px rgba(0,0,0,0.55);
     }
 
-    /* Content image (your purple birthday frame design inside home.png already)
-       so we don't add extra headings or overlays */
-    .inside{
-      position: relative;
+    .frame img {
       width: 100%;
       height: auto;
+      display: block;
     }
 
-    /* Buttons container over the image */
-    .btnRow{
+    /* BUTTONS ON TOP OF FRAME */
+    .btnRow {
       position: absolute;
       left: 50%;
-      bottom: 17%;
+      bottom: 70px;                 /* position like your screenshot */
       transform: translateX(-50%);
       display: flex;
-      gap: 42px;
+      gap: 65px;
+      align-items: center;
       justify-content: center;
-      flex-wrap: wrap;
-      width: 90%;
+      width: 80%;
       pointer-events: auto;
     }
 
-    /* Pretty image buttons (NO ugly default) */
-    .imgBtn{
+    /* Pretty image buttons */
+    .imgBtn {
       display: inline-block;
       text-decoration: none;
-      border-radius: 22px;
     }
 
-    .imgBtn img{
+    .imgBtn img {
       width: 130px;
       height: auto;
       display: block;
-      border-radius: 22px;
+      border-radius: 18px;
+
       transition: 0.25s ease;
-      filter: drop-shadow(0 14px 30px rgba(0,0,0,0.35));
-      user-select:none;
-      -webkit-user-drag:none;
+      filter: drop-shadow(0 14px 28px rgba(0,0,0,0.35));
+      user-select: none;
+      -webkit-user-drag: none;
     }
 
-    .imgBtn img:hover{
+    .imgBtn:hover img {
       transform: translateY(-7px) scale(1.05);
       filter: drop-shadow(0 18px 40px rgba(0,0,0,0.45));
     }
 
-    .imgBtn img:active{
+    .imgBtn:active img {
       transform: scale(0.96);
     }
 
-    /* Music toggle button (top-right like screenshot) */
-    .musicBtn{
+    /* Fix book button being small */
+    .imgBtn.book img {
+      width: 150px; /* bigger book */
+    }
+
+    /* Music toggle (volume icon button) */
+    .musicBtn {
       position: fixed;
       top: 18px;
       right: 18px;
-      width: 54px;
-      height: 54px;
+      width: 55px;
+      height: 55px;
       border-radius: 50%;
       border: 1px solid rgba(255,255,255,0.25);
       background: rgba(0,0,0,0.35);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      cursor:pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
       z-index: 999;
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
       transition: 0.2s;
     }
 
-    .musicBtn:hover{
+    .musicBtn:hover {
       transform: scale(1.06);
     }
 
-    .musicBtn img{
-      width: 26px;
-      height: 26px;
+    .musicBtn span {
+      font-size: 24px;
+      color: white;
       opacity: 0.9;
     }
 
-    /* Fireworks circles */
-    .firework{
+    /* Firework effect */
+    .firework {
       position: absolute;
-      width: 12px;
-      height: 12px;
+      width: 10px;
+      height: 10px;
       border-radius: 50%;
-      pointer-events:none;
-      animation: boom 900ms ease-out forwards;
-      z-index: 50;
+      pointer-events: none;
+      animation: boom 850ms ease-out forwards;
+      z-index: 9999;
     }
 
-    @keyframes boom{
-      0%{ transform: scale(0.8); opacity: 1; }
-      100%{ transform: scale(14); opacity: 0; }
+    @keyframes boom {
+      from { transform: scale(0.8); opacity: 1; }
+      to   { transform: scale(14); opacity: 0; }
     }
 
     /* Responsive */
-    @media(max-width: 650px){
-      .btnRow{ gap: 22px; bottom: 14%; }
-      .imgBtn img{ width: 112px; }
+    @media (max-width: 650px) {
+      .btnRow { gap: 25px; bottom: 50px; width: 95%; }
+      .imgBtn img { width: 105px; }
+      .imgBtn.book img { width: 120px; }
     }
   </style>
 </head>
@@ -149,37 +141,35 @@
   <!-- Music -->
   <audio id="bgMusic" src="song.mp3" autoplay loop></audio>
 
-  <!-- Music toggle -->
-  <div class="musicBtn" onclick="toggleMusic()">
-    <img src="letter-icon.png" alt="music">
+  <!-- Volume button -->
+  <div class="musicBtn" onclick="toggleMusic()" title="Music">
+    <span id="volIcon">🔊</span>
   </div>
 
-  <div class="bg" onclick="makeFirework(event)">
+  <!-- Frame -->
+  <div class="frame" onclick="makeFirework(event)">
+    <!-- THIS SHOWS YOUR BANNER + background -->
+    <img src="bg.png" alt="Birthday Banner">
 
-    <div class="frame">
-      <!-- Your design image is already in home.png -->
-      <img src="bg.png" class="inside" alt="birthday-frame" />
+    <!-- Buttons -->
+    <div class="btnRow">
+      <a href="letter.html" class="imgBtn">
+        <img src="btn-letter.png" alt="Letter">
+      </a>
 
-      <!-- Buttons aligned like your screenshot -->
-      <div class="btnRow">
-        <a href="letter.html" class="imgBtn">
-          <img src="btn-letter.png" alt="Letter">
-        </a>
+      <a href="photos.html" class="imgBtn">
+        <img src="btn-gift.png" alt="Gift">
+      </a>
 
-        <a href="photos.html" class="imgBtn">
-          <img src="btn-gift.png" alt="Photos">
-        </a>
-
-        <a href="scroll.html" class="imgBtn">
-          <img src="btn-book.png" alt="Story">
-        </a>
-      </div>
+      <a href="scroll.html" class="imgBtn book">
+        <img src="btn-book.png" alt="Book">
+      </a>
     </div>
-
   </div>
 
   <script>
     const music = document.getElementById("bgMusic");
+    const volIcon = document.getElementById("volIcon");
     let isMuted = false;
 
     // ✅ Music continues across pages
@@ -192,8 +182,10 @@
       if (savedMuted === "true") {
         isMuted = true;
         music.pause();
+        volIcon.textContent = "🔇";
       } else {
         music.play().catch(()=>{});
+        volIcon.textContent = "🔊";
       }
     });
 
@@ -206,28 +198,29 @@
       if(music.paused){
         music.play().catch(()=>{});
         isMuted = false;
+        volIcon.textContent = "🔊";
       } else {
         music.pause();
         isMuted = true;
+        volIcon.textContent = "🔇";
       }
     }
 
-    // ✅ Fireworks effect on click (but NOT when clicking buttons)
+    // ✅ Fireworks (not triggered on clicking buttons)
     function makeFirework(e){
       if(e.target.tagName === "IMG" || e.target.tagName === "A") return;
 
       const fw = document.createElement("div");
       fw.className = "firework";
-
-      fw.style.left = (e.pageX - 6) + "px";
-      fw.style.top  = (e.pageY - 6) + "px";
+      fw.style.left = (e.pageX - 5) + "px";
+      fw.style.top  = (e.pageY - 5) + "px";
 
       const colors = ["#ff4fd8","#a56bff","#00f5ff","#ffe26a","#7CFF6B","#ff6a6a"];
       fw.style.background = colors[Math.floor(Math.random() * colors.length)];
-      fw.style.boxShadow = "0 0 20px " + fw.style.background;
+      fw.style.boxShadow = "0 0 22px " + fw.style.background;
 
       document.body.appendChild(fw);
-      setTimeout(() => fw.remove(), 900);
+      setTimeout(() => fw.remove(), 850);
     }
   </script>
 
