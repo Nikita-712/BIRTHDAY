@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Letter 💌</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{
+      min-height:100vh;
+      font-family: Arial, sans-serif;
+      overflow:hidden;
+      background: #120424;
+    }
+
+    /* background image */
+    .bg{
+      position: fixed;
+      inset: 0;
+      background-image: url("letter-bg.png");
+      background-size: cover;
+      background-position: center;
+      z-index: 0;
+    }
+
+    /* Back button */
+    .back{
+      position: fixed;
+      top: 14px;
+      left: 14px;
+      z-index: 9999;
+      padding: 10px 14px;
+      border-radius: 999px;
+      text-decoration: none;
+      font-weight: 900;
+      background: rgba(255,255,255,0.18);
+      color: white;
+      border: 1px solid rgba(255,255,255,0.22);
+      backdrop-filter: blur(10px);
+    }
+
+    /* ICON INTRO */
+    #intro{
+      position: fixed;
+      inset: 0;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      z-index: 5;
+    }
+
+    #icon{
+      width: min(260px, 60vw);
+      height: auto;
+      transition: transform 1.1s ease, opacity 0.6s ease;
+      will-change: transform;
+      filter: drop-shadow(0 25px 55px rgba(0,0,0,0.45));
+    }
+
+    #icon.expand{
+      transform: scale(14);
+      opacity: 0;
+    }
+
+    /* LETTER SCREEN */
+    #letterScreen{
+      position: fixed;
+      inset: 0;
+      display: none;
+      justify-content:center;
+      align-items:center;
+      z-index: 10;
+      padding: 18px;
+      overflow: auto;
+      scroll-behavior: smooth;
+    }
+
+    .paper{
+      width: min(820px, 92vw);
+      background: rgba(255,255,255,0.90);
+      color: #1f1f27;
+      border-radius: 22px;
+      padding: 26px 22px;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.35);
+      line-height: 1.75;
+    }
+
+    .title{
+      font-family: "Playfair Display", serif;
+      font-size: 30px;
+      font-weight: 800;
+      margin-bottom: 12px;
+    }
+
+    .typing{
+      font-family: "Caveat", cursive;
+      font-size: 26px;
+      white-space: pre-wrap;
+    }
+
+    @media (max-width: 480px){
+      .paper{ padding: 20px 16px; }
+      .title{ font-size: 24px; }
+      .typing{ font-size: 23px; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="bg"></div>
+
+  <a class="back" href="home.html">← Back</a>
+
+  <!-- envelope intro -->
+  <div id="intro">
+    <img id="icon" src="letter-icon.png" alt="Letter Icon" />
+  </div>
+
+  <!-- actual letter -->
+  <div id="letterScreen">
+    <div class="paper">
+      <div class="title">My Love, 💗</div>
+      <div id="typedText" class="typing"></div>
+    </div>
+  </div>
+
+  <script>
+    const icon = document.getElementById("icon");
+    const intro = document.getElementById("intro");
+    const letterScreen = document.getElementById("letterScreen");
+    const typedText = document.getElementById("typedText");
+
+    // filler letter for now
+    const LETTER = `
+Happy Birthday, my love 💗
+
+Today is your day… but honestly, I feel like I’m the lucky one.
+Lucky to know you, to love you, and to have you in my life.
+
+Even if we’re far — India to France — you still feel close to my heart.
+I love the way you make me smile without even trying.
+I love the comfort I feel just by thinking about you.
+
+I made this little website for you because I wanted you to feel special —
+not just today, but every time you open it.
+
+You deserve the best things in life:
+happiness, peace, success,
+and a love that never feels uncertain.
+
+So here I am,
+celebrating you,
+missing you,
+and loving you… always.
+
+Happy Birthday once again, my baby ❤️
+
+— Yours,
+Nikita
+    `.trim();
+
+    function typeText(text, speed = 18){
+      let i = 0;
+      typedText.textContent = "";
+
+      const timer = setInterval(() => {
+        typedText.textContent += text[i];
+        i++;
+
+        // auto scroll while typing
+        letterScreen.scrollTop = letterScreen.scrollHeight;
+
+        if(i >= text.length){
+          clearInterval(timer);
+        }
+      }, speed);
+    }
+
+    function openLetter(){
+      icon.classList.add("expand");
+
+      setTimeout(() => {
+        intro.style.display = "none";
+        letterScreen.style.display = "flex";
+        typeText(LETTER, 18);
+      }, 850);
+    }
+
+    // auto start after opening page
+    window.addEventListener("load", () => {
+      setTimeout(openLetter, 350);
+    });
+
+    // also allow click
+    icon.addEventListener("click", openLetter);
+  </script>
+
+</body>
+</html>
