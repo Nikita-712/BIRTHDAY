@@ -13,20 +13,10 @@
   <style>
     *{margin:0;padding:0;box-sizing:border-box;}
     body{
-      min-height:100vh;
-      font-family: Arial, sans-serif;
+      height:100vh;
       overflow:hidden;
-      background: #120424;
-    }
-
-    /* background image */
-    .bg{
-      position: fixed;
-      inset: 0;
-      background-image: url("letter-bg.png");
-      background-size: cover;
-      background-position: center;
-      z-index: 0;
+      font-family: Arial, sans-serif;
+      background:#120424;
     }
 
     /* Back button */
@@ -45,7 +35,7 @@
       backdrop-filter: blur(10px);
     }
 
-    /* ICON INTRO */
+    /* INTRO ICON */
     #intro{
       position: fixed;
       inset: 0;
@@ -72,23 +62,39 @@
     #letterScreen{
       position: fixed;
       inset: 0;
-      display: none;
-      justify-content:center;
-      align-items:center;
       z-index: 10;
-      padding: 18px;
+      display: none;
       overflow: auto;
       scroll-behavior: smooth;
     }
 
-    .paper{
-      width: min(820px, 92vw);
-      background: rgba(255,255,255,0.90);
+    /* FULL background image visible */
+    .letterBg{
+      position: relative;
+      width: 100vw;
+      min-height: 100vh;
+      background-image: url("letter-bg.png");
+      background-size: cover;       /* ✅ fills screen */
+      background-position: center;  /* ✅ centered */
+      background-repeat: no-repeat;
+    }
+
+    /* ✅ THIS is the writing area INSIDE your beige space */
+    .writingArea{
+      position: absolute;
+
+      /* 🔥 Adjust these 4 values to fit your beige blank space perfectly */
+      left: 16%;
+      top: 16%;
+      width: 68%;
+      height: 72%;
+
+      padding: 20px 20px;
+
       color: #1f1f27;
-      border-radius: 22px;
-      padding: 26px 22px;
-      box-shadow: 0 30px 80px rgba(0,0,0,0.35);
       line-height: 1.75;
+
+      overflow: auto; /* ✅ scroll inside writing area if long */
     }
 
     .title{
@@ -104,17 +110,23 @@
       white-space: pre-wrap;
     }
 
-    @media (max-width: 480px){
-      .paper{ padding: 20px 16px; }
+    /* Mobile adjustments */
+    @media (max-width: 600px){
+      .writingArea{
+        left: 10%;
+        top: 14%;
+        width: 80%;
+        height: 74%;
+        padding: 14px 14px;
+      }
       .title{ font-size: 24px; }
       .typing{ font-size: 23px; }
     }
+
   </style>
 </head>
 
 <body>
-
-  <div class="bg"></div>
 
   <a class="back" href="home.html">← Back</a>
 
@@ -125,9 +137,11 @@
 
   <!-- actual letter -->
   <div id="letterScreen">
-    <div class="paper">
-      <div class="title">My Love, 💗</div>
-      <div id="typedText" class="typing"></div>
+    <div class="letterBg">
+      <div class="writingArea">
+        <div class="title">My Love, 💗</div>
+        <div id="typedText" class="typing"></div>
+      </div>
     </div>
   </div>
 
@@ -174,8 +188,9 @@ Nikita
         typedText.textContent += text[i];
         i++;
 
-        // auto scroll while typing
-        letterScreen.scrollTop = letterScreen.scrollHeight;
+        // auto scroll typing inside writing area
+        const writingArea = document.querySelector(".writingArea");
+        writingArea.scrollTop = writingArea.scrollHeight;
 
         if(i >= text.length){
           clearInterval(timer);
@@ -188,17 +203,16 @@ Nikita
 
       setTimeout(() => {
         intro.style.display = "none";
-        letterScreen.style.display = "flex";
+        letterScreen.style.display = "block";
         typeText(LETTER, 18);
       }, 850);
     }
 
-    // auto start after opening page
+    // auto start
     window.addEventListener("load", () => {
       setTimeout(openLetter, 350);
     });
 
-    // also allow click
     icon.addEventListener("click", openLetter);
   </script>
 
