@@ -289,6 +289,13 @@ Nikita
 
     document.addEventListener("click", onTap);
     document.addEventListener("touchstart", onTap, { passive: true });
+    // -------- TRUE FULLSCREEN ON FIRST CLICK --------
+document.addEventListener("click", () => {
+  if (!document.fullscreenElement) {
+    document.documentElement.requestFullscreen().catch(() => {});
+  }
+}, { once: true });
+
   </script>
 
 </body>
