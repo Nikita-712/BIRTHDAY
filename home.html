@@ -244,6 +244,12 @@
     document.addEventListener("click", () => {
       bgMusic.play().catch(()=>{});
     }, { once: true });
+    document.addEventListener("click", () => {
+  if(document.fullscreenElement == null){
+    document.documentElement.requestFullscreen().catch(()=>{});
+  }
+}, { once:true });
+
   </script>
 
 </body>
