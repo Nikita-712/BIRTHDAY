@@ -37,6 +37,13 @@
     video.addEventListener("ended", () => {
       window.location.href = "home.html";
     });
+    // -------- TRUE FULLSCREEN ON FIRST CLICK --------
+document.addEventListener("click", () => {
+  if (!document.fullscreenElement) {
+    document.documentElement.requestFullscreen().catch(() => {});
+  }
+}, { once: true });
+
   </script>
 
 </body>
