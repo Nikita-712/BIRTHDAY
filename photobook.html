@@ -24,29 +24,36 @@ body {
 
 /* 3D space */
 .scene {
-  perspective: 2500px;
+  perspective: 3000px;
 }
 
-/* BIG book */
+/* Book container */
 .book {
-  height: 88vh;              /* almost full height */
-  aspect-ratio: 3 / 4;      /* book proportion */
+  height: 88vh;                 /* almost full page */
+  max-height: 900px;
   position: relative;
-  transform-style: preserve-3d;
   cursor: pointer;
+  transform-style: preserve-3d;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-/* Front cover */
+/* Book image wrapper */
 .cover {
-  position: absolute;
-  inset: 0;
-  background: url("book-cover.png") center/cover no-repeat;
-  border-radius: 14px;
+  height: 100%;
   transform-origin: left center;
   transition: transform 0.9s ease;
-  box-shadow:
-    0 40px 80px rgba(0,0,0,0.35),
-    inset 0 0 0 1px rgba(255,255,255,0.08);
+  will-change: transform;
+}
+
+/* Actual image — NO CROPPING */
+.cover img {
+  height: 100%;
+  width: auto;
+  display: block;
+  border-radius: 6px;
+  box-shadow: 0 40px 90px rgba(0,0,0,0.35);
 }
 
 /* Open animation */
@@ -54,10 +61,10 @@ body {
   transform: rotateY(-160deg);
 }
 
-/* Tap hint */
+/* Hint */
 .hint {
   position: absolute;
-  bottom: -42px;
+  bottom: -40px;
   width: 100%;
   text-align: center;
   font-size: 14px;
@@ -79,18 +86,34 @@ body {
 
 <div class="scene">
   <div class="book" id="book">
-    <div class="cover"></div>
+    <div class="cover">
+      <img src="book-cover.png" alt="Photobook cover">
+    </div>
     <div class="hint">Tap to open</div>
   </div>
 </div>
 
 <script>
 const book = document.getElementById("book");
+let hasGoneFullscreen = false;
+
+/* Fullscreen (safe + once only) */
+function goFullscreen() {
+  if (hasGoneFullscreen) return;
+  const el = document.documentElement;
+
+  if (el.requestFullscreen) el.requestFullscreen();
+  else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+  else if (el.msRequestFullscreen) el.msRequestFullscreen();
+
+  hasGoneFullscreen = true;
+}
 
 book.addEventListener("click", () => {
+  goFullscreen();
   book.classList.add("open");
 
-  /* STEP 2 will replace this timeout */
+  /* STEP 2 will replace this */
   setTimeout(() => {
     console.log("Book opened — ready for photobook");
   }, 900);
