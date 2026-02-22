@@ -14,7 +14,7 @@
 
 body {
   height: 100vh;
-  background: url("photobook-bg.png") center/cover no-repeat;
+  background: url("bg.png") center/cover no-repeat;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -22,12 +22,12 @@ body {
   font-family: serif;
 }
 
-/* Scene container */
+/* 3D scene */
 .scene {
   perspective: 2000px;
 }
 
-/* Book wrapper */
+/* Book */
 .book {
   width: 260px;
   height: 360px;
@@ -48,7 +48,7 @@ body {
   box-shadow: 0 20px 40px rgba(0,0,0,0.4);
 }
 
-/* Book spine illusion */
+/* Spine */
 .spine {
   position: absolute;
   left: -8px;
@@ -58,24 +58,12 @@ body {
   border-radius: 4px 0 0 4px;
 }
 
-/* Open state */
+/* Open animation */
 .book.open .cover {
   transform: rotateY(-160deg);
 }
 
-/* Fade-out after open */
-.fade-out {
-  animation: fadeOut 0.5s forwards;
-}
-
-@keyframes fadeOut {
-  to {
-    opacity: 0;
-    transform: scale(1.1);
-  }
-}
-
-/* Hint text */
+/* Hint */
 .hint {
   position: absolute;
   bottom: -40px;
@@ -83,6 +71,7 @@ body {
   text-align: center;
   font-size: 14px;
   opacity: 0.7;
+  color: #fff;
 }
 </style>
 </head>
@@ -103,14 +92,10 @@ const book = document.getElementById("book");
 book.addEventListener("click", () => {
   book.classList.add("open");
 
-  // After open animation → transition to photobook
+  // TEMP: next step will replace this
   setTimeout(() => {
-    document.body.classList.add("fade-out");
-    setTimeout(() => {
-      // TEMP: placeholder — next step replaces this
-      document.body.innerHTML = "<h1 style='color:white'>Loading photobook…</h1>";
-    }, 500);
-  }, 800);
+    alert("Book opened! Step 1 complete ✅");
+  }, 900);
 });
 </script>
 
