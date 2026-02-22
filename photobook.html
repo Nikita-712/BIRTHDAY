@@ -15,26 +15,30 @@
 body {
   height: 100vh;
   background: url("photobook-bg.png") center/cover no-repeat;
-  display: flex;
-  justify-content: center;
-  align-items: center;
   overflow: hidden;
   font-family: serif;
 }
 
 /* SCENE */
 .scene {
+  position: relative;
   width: 100vw;
   height: 100vh;
-  position: relative;
+}
+
+/* CENTER WRAPPER (IMPORTANT) */
+.center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
 /* BOOK COVER */
 .book {
-  position: absolute;
+  position: relative;
   cursor: pointer;
   transition: transform 0.6s ease, opacity 0.4s ease;
-  z-index: 5;
 }
 
 /* backing plate */
@@ -59,9 +63,9 @@ body {
   box-shadow: 0 40px 80px rgba(0,0,0,0.35);
 }
 
-/* slide right before open */
+/* slide before open */
 .book.shift-right {
-  transform: translateX(180px);
+  transform: translateX(120px);
 }
 
 /* open animation */
@@ -83,10 +87,6 @@ body {
 /* FLIPBOOK */
 #flipbook {
   display: none;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
 }
 
 /* PAGE */
@@ -104,23 +104,27 @@ body {
 
 <div class="scene">
 
-  <!-- COVER -->
-  <div class="book" id="book">
-    <div class="cover">
-      <img id="coverImg" src="book-cover.png" alt="Cover">
+  <!-- CENTERED CONTENT -->
+  <div class="center">
+
+    <!-- COVER -->
+    <div class="book" id="book">
+      <div class="cover">
+        <img id="coverImg" src="book-cover.png" alt="Cover">
+      </div>
+      <div class="hint">Tap to open</div>
     </div>
-    <div class="hint">Tap to open</div>
-  </div>
 
-  <!-- FLIPBOOK (OPEN SPREADS) -->
-  <div id="flipbook">
-    <div class="page" style="background-image:url('jaipur.png')"></div>
-    <div class="page" style="background-image:url('agra.png')"></div>
-    <div class="page" style="background-image:url('udaipur.png')"></div>
-    <div class="page" style="background-image:url('us.png')"></div>
-    <div class="page" style="background-image:url('him.png')"></div>
-  </div>
+    <!-- FLIPBOOK -->
+    <div id="flipbook">
+      <div class="page" style="background-image:url('jaipur.png')"></div>
+      <div class="page" style="background-image:url('agra.png')"></div>
+      <div class="page" style="background-image:url('udaipur.png')"></div>
+      <div class="page" style="background-image:url('us.png')"></div>
+      <div class="page" style="background-image:url('him.png')"></div>
+    </div>
 
+  </div>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -131,20 +135,24 @@ const book = document.getElementById("book");
 const coverImg = document.getElementById("coverImg");
 const flipbook = document.getElementById("flipbook");
 
-let bookWidth, bookHeight;
+let pageHeight, pageWidth, bookWidth;
 let opened = false;
 
-/* lock size */
+/* LOCK SIZES */
 window.addEventListener("load", () => {
-  bookHeight = window.innerHeight * 0.88;
+  pageHeight = window.innerHeight * 0.88;
+
   const ratio = coverImg.naturalWidth / coverImg.naturalHeight;
-  bookWidth = bookHeight * ratio;
+  pageWidth = pageHeight * ratio;
 
-  coverImg.style.height = bookHeight + "px";
-  coverImg.style.width = bookWidth + "px";
+  /* cover */
+  coverImg.style.height = pageHeight + "px";
+  coverImg.style.width = pageWidth + "px";
+  book.style.width = pageWidth + "px";
+  book.style.height = pageHeight + "px";
 
-  book.style.width = bookWidth + "px";
-  book.style.height = bookHeight + "px";
+  /* open book = DOUBLE WIDTH */
+  bookWidth = pageWidth * 2;
 });
 
 /* fullscreen */
@@ -154,7 +162,7 @@ function goFullscreen() {
   }
 }
 
-/* open book */
+/* OPEN BOOK */
 book.addEventListener("click", () => {
   if (opened) return;
   opened = true;
@@ -170,12 +178,12 @@ book.addEventListener("click", () => {
 
     flipbook.style.display = "block";
     flipbook.style.width = bookWidth + "px";
-    flipbook.style.height = bookHeight + "px";
+    flipbook.style.height = pageHeight + "px";
 
     $("#flipbook").turn({
       width: bookWidth,
-      height: bookHeight,
-      display: "double",   // ✅ CRITICAL FIX
+      height: pageHeight,
+      display: "double",
       autoCenter: false,
       duration: 900,
       gradients: true
@@ -183,11 +191,13 @@ book.addEventListener("click", () => {
   }, 1100);
 });
 
-/* click to turn */
+/* CLICK LEFT / RIGHT */
 flipbook.addEventListener("click", (e) => {
   const rect = flipbook.getBoundingClientRect();
   const x = e.clientX - rect.left;
-  x > rect.width / 2 ? $("#flipbook").turn("next") : $("#flipbook").turn("previous");
+  x > rect.width / 2
+    ? $("#flipbook").turn("next")
+    : $("#flipbook").turn("previous");
 });
 </script>
 
