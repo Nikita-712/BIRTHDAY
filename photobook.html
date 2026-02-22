@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Photobook</title>
 
+<script src="turn.min.js"></script>
+
 <style>
 * {
   margin: 0;
@@ -25,33 +27,34 @@ body {
 /* 3D space */
 .scene {
   perspective: 3200px;
+  position: relative;
 }
 
-/* Book wrapper (SIZE WILL BE LOCKED BY JS) */
+/* Book wrapper */
 .book {
   position: relative;
   transform-style: preserve-3d;
   cursor: pointer;
+  z-index: 5;
 }
 
-/* Backing plate (prevents white transparency issue) */
+/* Backing plate (fixes white transparency) */
 .book::before {
   content: "";
   position: absolute;
   inset: 0;
-  background: #c7b08a; /* warm paper tone, invisible behind cover */
+  background: #c7b08a;
   border-radius: 8px;
   transform: translateZ(-1px);
 }
 
-/* Cover wrapper */
+/* Cover */
 .cover {
   transform-origin: left center;
   transition: transform 0.9s ease;
   will-change: transform;
 }
 
-/* Your image — untouched */
 .cover img {
   display: block;
   height: 100%;
@@ -77,47 +80,86 @@ body {
   color: #fff;
   letter-spacing: 1px;
 }
+
+/* Photobook */
+#flipbook {
+  position: absolute;
+  inset: 0;
+  display: none;
+  z-index: 1;
+}
+
+.page {
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+}
 </style>
 </head>
 
 <body>
 
 <div class="scene">
+  <!-- COVER -->
   <div class="book" id="book">
     <div class="cover">
       <img id="coverImg" src="book-cover.png" alt="Photobook cover">
     </div>
     <div class="hint">Tap to open</div>
   </div>
+
+  <!-- PHOTOBOOK -->
+  <div id="flipbook">
+    <div class="page" style="background-image:url('jaipur.png')"></div>
+    <div class="page" style="background-image:url('agra.png')"></div>
+    <div class="page" style="background-image:url('udaipur.png')"></div>
+    <div class="page" style="background-image:url('us.png')"></div>
+    <div class="page" style="background-image:url('him.png')"></div>
+  </div>
 </div>
 
 <script>
 const book = document.getElementById("book");
 const coverImg = document.getElementById("coverImg");
+const flipbook = document.getElementById("flipbook");
+
 let hasGoneFullscreen = false;
+let bookHeight;
 
 /* LOCK SIZE ON LOAD */
 window.addEventListener("load", () => {
-  const maxHeight = window.innerHeight * 0.88; // visual margin
-  coverImg.style.height = maxHeight + "px";
-  book.style.height = maxHeight + "px";
+  bookHeight = window.innerHeight * 0.88;
+  coverImg.style.height = bookHeight + "px";
+  book.style.height = bookHeight + "px";
 });
 
 /* Fullscreen helper */
 function goFullscreen() {
   if (hasGoneFullscreen) return;
   const el = document.documentElement;
-
   if (el.requestFullscreen) el.requestFullscreen();
   else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
-
   hasGoneFullscreen = true;
 }
 
-/* Click handler */
+/* Click to open */
 book.addEventListener("click", () => {
-  goFullscreen();          // fullscreen WITHOUT resizing
+  goFullscreen();
   book.classList.add("open");
+
+  setTimeout(() => {
+    book.style.display = "none";
+    flipbook.style.display = "block";
+
+    $("#flipbook").turn({
+      width: book.offsetWidth,
+      height: bookHeight,
+      display: "single",
+      autoCenter: true,
+      duration: 900,
+      gradients: true
+    });
+  }, 900);
 });
 </script>
 
