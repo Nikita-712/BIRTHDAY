@@ -267,6 +267,31 @@
         console.log("Autoplay blocked, will start on first click.");
       }
     });
+    // ===== MUSIC CONTROL =====
+const bgMusic = document.getElementById("bgMusic");
+const musicBtn = document.getElementById("musicBtn");
+
+let musicOn = true;
+
+// autoplay on first interaction
+document.addEventListener("click", () => {
+  bgMusic.play().catch(()=>{});
+}, { once: true });
+
+// toggle button
+musicBtn.addEventListener("click", (e) => {
+  e.stopPropagation();
+
+  if(musicOn){
+    bgMusic.pause();
+    musicBtn.textContent = "🔇";
+  }else{
+    bgMusic.play().catch(()=>{});
+    musicBtn.textContent = "🎵";
+  }
+
+  musicOn = !musicOn;
+});
 
     // If autoplay blocked, start on first click anywhere
     document.addEventListener("click", () => {
