@@ -61,19 +61,23 @@ body {
   transform: translateX(180px);
 }
 
-/* ---------- INNER BROWN PAGE (NEW) ---------- */
+/* ---------- SOLID BACK COVER (NEW FIX) ---------- */
 .inner-page {
   position: absolute;
-  inset: 6px; /* slight inset = stacked paper feel */
-  background: rgba(168, 140, 105, 0.55); /* brown similar to bg */
-  border-radius: 14px;
+  inset: 0;
+  background: #9b7a52; /* solid brown, NOT bg */
+  border-radius: 16px;
   z-index: 0;
-  box-shadow: inset 0 0 0 1px rgba(120, 90, 60, 0.25);
+  box-shadow:
+    inset 0 0 0 1px rgba(70,50,30,0.25),
+    0 20px 40px rgba(0,0,0,0.25);
 }
 
-/* ---------- COVER ---------- */
+/* ---------- COVER (SLIGHTLY SMALLER) ---------- */
 .cover {
-  position: relative;
+  position: absolute;
+  inset: 2%;
+  margin: auto;
   z-index: 1;
   transform-origin: left center;
   transform-style: preserve-3d;
@@ -81,7 +85,9 @@ body {
 }
 
 .cover img {
-  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
   border-radius: 14px;
   box-shadow: 0 40px 80px rgba(0,0,0,0.35);
 }
@@ -199,7 +205,7 @@ body {
 
   <!-- BOOK -->
   <div class="book" id="book">
-    <div class="inner-page"></div> <!-- 👈 NEW -->
+    <div class="inner-page"></div>
     <div class="cover">
       <img id="coverImg" src="book-cover.png">
     </div>
@@ -239,8 +245,6 @@ window.addEventListener("load", () => {
   const ratio = coverImg.naturalWidth / coverImg.naturalHeight;
   const pageWidth = h * ratio;
 
-  coverImg.style.height = h + "px";
-  coverImg.style.width = pageWidth + "px";
   book.style.height = h + "px";
   book.style.width = pageWidth + "px";
 
