@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Photobook</title>
+
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  height: 100vh;
+  background: url("assets/bg/photobook-bg.png") center/cover no-repeat;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  font-family: serif;
+}
+
+/* Scene container */
+.scene {
+  perspective: 2000px;
+}
+
+/* Book wrapper */
+.book {
+  width: 260px;
+  height: 360px;
+  position: relative;
+  transform-style: preserve-3d;
+  cursor: pointer;
+}
+
+/* Front cover */
+.cover {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: url("assets/photobook/book-cover.png") center/cover no-repeat;
+  border-radius: 6px;
+  transform-origin: left center;
+  transition: transform 0.8s ease;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+}
+
+/* Book spine illusion */
+.spine {
+  position: absolute;
+  left: -8px;
+  width: 8px;
+  height: 100%;
+  background: linear-gradient(to right, #333, #111);
+  border-radius: 4px 0 0 4px;
+}
+
+/* Open state */
+.book.open .cover {
+  transform: rotateY(-160deg);
+}
+
+/* Fade-out after open */
+.fade-out {
+  animation: fadeOut 0.5s forwards;
+}
+
+@keyframes fadeOut {
+  to {
+    opacity: 0;
+    transform: scale(1.1);
+  }
+}
+
+/* Hint text */
+.hint {
+  position: absolute;
+  bottom: -40px;
+  width: 100%;
+  text-align: center;
+  font-size: 14px;
+  opacity: 0.7;
+}
+</style>
+</head>
+
+<body>
+
+<div class="scene">
+  <div class="book" id="book">
+    <div class="spine"></div>
+    <div class="cover"></div>
+    <div class="hint">Tap to open</div>
+  </div>
+</div>
+
+<script>
+const book = document.getElementById("book");
+
+book.addEventListener("click", () => {
+  book.classList.add("open");
+
+  // After open animation → transition to photobook
+  setTimeout(() => {
+    document.body.classList.add("fade-out");
+    setTimeout(() => {
+      // TEMP: placeholder — next step replaces this
+      document.body.innerHTML = "<h1 style='color:white'>Loading photobook…</h1>";
+    }, 500);
+  }, 800);
+});
+</script>
+
+</body>
+</html>
