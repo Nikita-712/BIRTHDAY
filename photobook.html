@@ -24,36 +24,41 @@ body {
 
 /* 3D space */
 .scene {
-  perspective: 3000px;
+  perspective: 3200px;
 }
 
-/* Book container */
+/* Book wrapper (SIZE WILL BE LOCKED BY JS) */
 .book {
-  height: 88vh;                 /* almost full page */
-  max-height: 900px;
   position: relative;
-  cursor: pointer;
   transform-style: preserve-3d;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  cursor: pointer;
 }
 
-/* Book image wrapper */
+/* Backing plate (prevents white transparency issue) */
+.book::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: #c7b08a; /* warm paper tone, invisible behind cover */
+  border-radius: 8px;
+  transform: translateZ(-1px);
+}
+
+/* Cover wrapper */
 .cover {
-  height: 100%;
   transform-origin: left center;
   transition: transform 0.9s ease;
   will-change: transform;
 }
 
-/* Actual image — NO CROPPING */
+/* Your image — untouched */
 .cover img {
+  display: block;
   height: 100%;
   width: auto;
-  display: block;
-  border-radius: 6px;
-  box-shadow: 0 40px 90px rgba(0,0,0,0.35);
+  border-radius: 8px;
+  box-shadow: 0 45px 90px rgba(0,0,0,0.35);
+  backface-visibility: hidden;
 }
 
 /* Open animation */
@@ -64,20 +69,13 @@ body {
 /* Hint */
 .hint {
   position: absolute;
-  bottom: -40px;
+  bottom: -38px;
   width: 100%;
   text-align: center;
   font-size: 14px;
-  letter-spacing: 1px;
   opacity: 0.7;
   color: #fff;
-}
-
-/* Mobile adjustment */
-@media (max-width: 768px) {
-  .book {
-    height: 82vh;
-  }
+  letter-spacing: 1px;
 }
 </style>
 </head>
@@ -87,7 +85,7 @@ body {
 <div class="scene">
   <div class="book" id="book">
     <div class="cover">
-      <img src="book-cover.png" alt="Photobook cover">
+      <img id="coverImg" src="book-cover.png" alt="Photobook cover">
     </div>
     <div class="hint">Tap to open</div>
   </div>
@@ -95,28 +93,31 @@ body {
 
 <script>
 const book = document.getElementById("book");
+const coverImg = document.getElementById("coverImg");
 let hasGoneFullscreen = false;
 
-/* Fullscreen (safe + once only) */
+/* LOCK SIZE ON LOAD */
+window.addEventListener("load", () => {
+  const maxHeight = window.innerHeight * 0.88; // visual margin
+  coverImg.style.height = maxHeight + "px";
+  book.style.height = maxHeight + "px";
+});
+
+/* Fullscreen helper */
 function goFullscreen() {
   if (hasGoneFullscreen) return;
   const el = document.documentElement;
 
   if (el.requestFullscreen) el.requestFullscreen();
   else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
-  else if (el.msRequestFullscreen) el.msRequestFullscreen();
 
   hasGoneFullscreen = true;
 }
 
+/* Click handler */
 book.addEventListener("click", () => {
-  goFullscreen();
+  goFullscreen();          // fullscreen WITHOUT resizing
   book.classList.add("open");
-
-  /* STEP 2 will replace this */
-  setTimeout(() => {
-    console.log("Book opened — ready for photobook");
-  }, 900);
 });
 </script>
 
