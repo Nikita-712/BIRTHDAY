@@ -88,14 +88,16 @@ body {
 #flipbook {
   display: none;
   position: absolute;
-  left: 50%;
   top: 50%;
-  transform: translate(calc(-50% - 120px), -50%);
+  left: 50%;
+  transform: translate(-40%, -50%);
 }
 
 /* PAGE */
 .page {
-  background-size: cover; /* IMPORTANT */
+  width: 100%;
+  height: 100%;
+  background-size: contain;
   background-position: center;
   background-repeat: no-repeat;
 }
@@ -187,7 +189,7 @@ book.addEventListener("click", () => {
       width: fixedBookWidth,
       height: fixedBookHeight,
       display: "single",
-      autoCenter: true,
+      autoCenter: false,
       duration: 900,
       gradients: true
     });
