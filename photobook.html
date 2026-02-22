@@ -60,7 +60,7 @@ body {
 }
 
 .book.shift-right {
-  transform: translateX(180px);
+  transform: translateX(260px);
 }
 
 .book.open .cover {
@@ -122,6 +122,37 @@ body {
   cursor: grabbing;
 }
 
+/* ---------- ONE-TIME TURN HINT ---------- */
+.turn-hint {
+  position: absolute;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 10px 18px;
+  font-size: 14px;
+  color: #fff;
+  background: rgba(0,0,0,0.45);
+  backdrop-filter: blur(6px);
+  border-radius: 20px;
+  letter-spacing: 0.3px;
+  opacity: 0;
+  animation: fadeIn 1.2s ease forwards;
+  z-index: 20;
+  pointer-events: none;
+}
+
+@keyframes fadeIn {
+  to { opacity: 1; }
+}
+
+.turn-hint.hide {
+  animation: fadeOut 0.6s ease forwards;
+}
+
+@keyframes fadeOut {
+  to { opacity: 0; transform: translateX(-50%) translateY(10px); }
+}
+
 /* ---------- NAV ZONES ---------- */
 .nav {
   position: absolute;
@@ -133,7 +164,6 @@ body {
 
 .nav.left { left: 0; }
 .nav.right { right: 0; }
-
 </style>
 </head>
 
@@ -157,6 +187,9 @@ body {
     <div class="slide" style="background-image:url('us.png')"></div>
     <div class="slide" style="background-image:url('him.png')"></div>
 
+    <!-- One-time hint -->
+    <div class="turn-hint" id="turnHint">Click to turn the page</div>
+
     <!-- Click zones -->
     <div class="nav left"></div>
     <div class="nav right"></div>
@@ -171,10 +204,12 @@ const flipbook = document.getElementById("flipbook");
 const slides = document.querySelectorAll(".slide");
 const navLeft = document.querySelector(".nav.left");
 const navRight = document.querySelector(".nav.right");
+const turnHint = document.getElementById("turnHint");
 
 let opened = false;
 let current = 0;
 let zoomed = false;
+let hintShown = true;
 
 /* ---------- COVER SIZE ---------- */
 window.addEventListener("load", () => {
@@ -197,15 +232,23 @@ function goFullscreen() {
 function showSlide(index) {
   slides.forEach((s, i) => {
     s.classList.remove("active", "prev", "zoomed");
-    s.style.transform = "";
     if (i === index) s.classList.add("active");
     if (i === index - 1) s.classList.add("prev");
   });
   zoomed = false;
 }
 
+/* ---------- HINT HIDE ---------- */
+function hideHintOnce() {
+  if (!hintShown) return;
+  hintShown = false;
+  turnHint.classList.add("hide");
+}
+
+/* ---------- NAV ---------- */
 function nextSlide() {
   if (zoomed) return;
+  hideHintOnce();
   if (current < slides.length - 1) {
     current++;
     showSlide(current);
@@ -214,6 +257,7 @@ function nextSlide() {
 
 function prevSlide() {
   if (zoomed) return;
+  hideHintOnce();
   if (current > 0) {
     current--;
     showSlide(current);
@@ -227,7 +271,6 @@ book.addEventListener("click", () => {
 
   goFullscreen();
   book.classList.add("shift-right");
-
   setTimeout(() => book.classList.add("open"), 300);
 
   setTimeout(() => {
@@ -238,10 +281,11 @@ book.addEventListener("click", () => {
   }, 1100);
 });
 
-/* ---------- NAVIGATION ---------- */
+/* ---------- CLICK ZONES ---------- */
 navRight.addEventListener("click", nextSlide);
 navLeft.addEventListener("click", prevSlide);
 
+/* ---------- KEYBOARD ---------- */
 document.addEventListener("keydown", e => {
   if (!opened) return;
   if (e.key === "ArrowRight") nextSlide();
@@ -250,10 +294,9 @@ document.addEventListener("keydown", e => {
 
 /* ---------- ZOOM ---------- */
 slides.forEach(slide => {
-  slide.addEventListener("dblclick", e => {
+  slide.addEventListener("dblclick", () => {
     slide.classList.toggle("zoomed");
     zoomed = slide.classList.contains("zoomed");
-    slide.style.transformOrigin = "center center";
   });
 });
 
