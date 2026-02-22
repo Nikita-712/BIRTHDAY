@@ -32,27 +32,7 @@
     <img src="unlock.png" alt="Unlock">
   </button>
 
-  <!-- Background Music -->
-  <audio id="bgMusic" src="song.mp3" loop></audio>
-
-  <!-- Mute button -->
-  <button id="muteBtn" class="muteBtn" title="Mute / Unmute">🔊</button>
-
   <script src="script.js"><script>
-  const bgMusic = document.getElementById("bgMusic");
-  const muteBtn = document.getElementById("muteBtn");
-
-  // Start music after first user interaction (browser rule)
-  document.body.addEventListener("click", () => {
-    bgMusic.play().catch(() => {});
-  }, { once: true });
-
-  // Mute / Unmute toggle
-  muteBtn.addEventListener("click", (e) => {
-    e.stopPropagation(); // prevents retriggering body click
-    bgMusic.muted = !bgMusic.muted;
-    muteBtn.textContent = bgMusic.muted ? "🔇" : "🔊";
-  });
-</script></script>
+  
 </body>
 </html>
