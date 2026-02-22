@@ -19,7 +19,7 @@ body {
   justify-content: center;
   align-items: center;
   overflow: hidden;
-  font-family: Georgia, serif;
+  font-family: "Georgia", serif;
 }
 
 .scene {
@@ -31,48 +31,123 @@ body {
   align-items: center;
 }
 
-/* ================= COVER ================= */
-.book-cover {
-  position: absolute;
-  z-index: 10;
+/* ---------- COVER ---------- */
+.book {
+  position: relative;
   cursor: pointer;
+  transition: transform 0.6s ease, opacity 0.4s ease;
+  z-index: 5;
+}
+
+.book::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: #c7b08a;
+  border-radius: 10px;
+  z-index: -1;
+}
+
+.cover {
   transform-origin: left center;
   transition: transform 0.9s ease;
 }
 
-.book-cover.shift {
-  transform: translateX(220px);
-}
-
-.book-cover.open {
-  transform: translateX(220px) rotateY(-160deg);
-}
-
-.book-cover img {
-  height: 80vh;
-  max-height: 700px;
+.cover img {
+  display: block;
   border-radius: 10px;
   box-shadow: 0 40px 80px rgba(0,0,0,0.35);
 }
 
-/* ================= FLIPBOOK ================= */
+.book.shift-right {
+  transform: translateX(180px); /* FIXED */
+}
+
+.book.open .cover {
+  transform: rotateY(-160deg);
+}
+
+/* ---------- FLIPBOOK ---------- */
 #flipbook {
-  width: 90vw;
-  max-width: 1200px;
-  height: 75vh;
-  max-height: 800px;
+  position: absolute;
   display: none;
+  overflow: hidden;
+  border-radius: 12px;
 }
 
-.page {
-  background: white;
+/* ---------- SLIDES ---------- */
+.slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.45s ease;
 }
 
-.page img {
+.slide.active {
+  opacity: 1;
+  z-index: 2;
+}
+
+.slide-inner {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  background-size: contain; /* IMPORTANT: prevents cutting */
+  background-position: center;
+  background-repeat: no-repeat;
+  transform: scale(1);
+  transition: transform 0.35s ease;
 }
+
+/* ---------- TURN HINT ---------- */
+.turn-hint {
+  position: absolute;
+  bottom: 22px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 9px 18px;
+  font-size: 12.5px;
+  color: rgba(255,255,255,0.75);
+  background: rgba(30,30,30,0.28);
+  backdrop-filter: blur(14px);
+  border-radius: 999px;
+  letter-spacing: 0.4px;
+  opacity: 0;
+  animation: hintFade 1.2s ease forwards, float 3s ease-in-out infinite;
+  z-index: 20;
+  pointer-events: none;
+}
+
+@keyframes hintFade {
+  to { opacity: 1; }
+}
+
+@keyframes float {
+  50% {
+    transform: translateX(-50%) translateY(-4px);
+  }
+}
+
+.turn-hint.hide {
+  animation: fadeOut 0.5s ease forwards;
+}
+
+@keyframes fadeOut {
+  to {
+    opacity: 0;
+    transform: translateX(-50%) translateY(8px);
+  }
+}
+
+/* ---------- NAV ---------- */
+.nav {
+  position: absolute;
+  top: 0;
+  width: 50%;
+  height: 100%;
+  z-index: 10;
+}
+.nav.left { left: 0; }
+.nav.right { right: 0; }
 </style>
 </head>
 
@@ -81,78 +156,119 @@ body {
 <div class="scene">
 
   <!-- COVER -->
-  <div class="book-cover" id="cover">
-    <img src="book-cover.png" alt="Cover">
+  <div class="book" id="book">
+    <div class="cover">
+      <img id="coverImg" src="book-cover.png">
+    </div>
   </div>
 
   <!-- FLIPBOOK -->
   <div id="flipbook">
 
-    <div class="page"><img src="jaipur-l.png"></div>
-    <div class="page"><img src="jaipur-r.png"></div>
+    <div class="slide">
+      <div class="slide-inner" style="background-image:url('jaipur.png')"></div>
+    </div>
+    <div class="slide">
+      <div class="slide-inner" style="background-image:url('agra.png')"></div>
+    </div>
+    <div class="slide">
+      <div class="slide-inner" style="background-image:url('udaipur.png')"></div>
+    </div>
+    <div class="slide">
+      <div class="slide-inner" style="background-image:url('us.png')"></div>
+    </div>
+    <div class="slide">
+      <div class="slide-inner" style="background-image:url('him.png')"></div>
+    </div>
 
-    <div class="page"><img src="agra-l.png"></div>
-    <div class="page"><img src="agra-r.png"></div>
+    <div class="turn-hint" id="turnHint">
+      Click to turn the page
+    </div>
 
-    <div class="page"><img src="udaipur-l.png"></div>
-    <div class="page"><img src="udaipur-r.png"></div>
-
-    <div class="page"><img src="us-l.png"></div>
-    <div class="page"><img src="us-r.png"></div>
-
-    <div class="page"><img src="him-l.png"></div>
-    <div class="page"><img src="him-r.png"></div>
-
+    <div class="nav left"></div>
+    <div class="nav right"></div>
   </div>
 
 </div>
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/turn.js/4.1.0/turn.min.js"></script>
-
 <script>
-const cover = document.getElementById("cover");
-const flipbook = $("#flipbook");
+const book = document.getElementById("book");
+const coverImg = document.getElementById("coverImg");
+const flipbook = document.getElementById("flipbook");
+const slides = document.querySelectorAll(".slide");
+const navLeft = document.querySelector(".nav.left");
+const navRight = document.querySelector(".nav.right");
+const hint = document.getElementById("turnHint");
 
 let opened = false;
+let current = 0;
+let hintVisible = true;
 
-cover.addEventListener("click", () => {
+/* MATCH BOOK SIZE — BUT DOUBLE WIDTH */
+window.addEventListener("load", () => {
+  const h = window.innerHeight * 0.88;
+  const ratio = coverImg.naturalWidth / coverImg.naturalHeight;
+
+  const pageWidth = h * ratio;
+
+  coverImg.style.height = h + "px";
+  coverImg.style.width = pageWidth + "px";
+  book.style.height = h + "px";
+  book.style.width = pageWidth + "px";
+
+  /* FIX: scrapbook spread = TWO pages */
+  flipbook.style.height = h + "px";
+  flipbook.style.width = pageWidth * 2 + "px";
+});
+
+function showSlide(i) {
+  slides.forEach((s, idx) => {
+    s.classList.toggle("active", idx === i);
+  });
+}
+
+function hideHint() {
+  if (!hintVisible) return;
+  hintVisible = false;
+  hint.classList.add("hide");
+}
+
+function next() {
+  hideHint();
+  if (current < slides.length - 1) {
+    current++;
+    showSlide(current);
+  }
+}
+
+function prev() {
+  hideHint();
+  if (current > 0) {
+    current--;
+    showSlide(current);
+  }
+}
+
+/* OPEN BOOK */
+book.addEventListener("click", () => {
   if (opened) return;
   opened = true;
 
-  // Shift book slightly right
-  cover.classList.add("shift");
+  book.classList.add("shift-right");
 
-  // Open cover
+  setTimeout(() => book.classList.add("open"), 300);
+
   setTimeout(() => {
-    cover.classList.add("open");
-  }, 200);
-
-  // Show flipbook and init Turn.js
-  setTimeout(() => {
-    document.getElementById("flipbook").style.display = "block";
-
-    const height = window.innerHeight * 0.75;
-    const width = height * 1.6;
-
-    flipbook.turn({
-      width: width,
-      height: height,
-      autoCenter: true,
-      duration: 900,
-      gradients: true
-    });
-
-  }, 700);
+    book.style.opacity = "0";
+    book.style.pointerEvents = "none";
+    flipbook.style.display = "block";
+    showSlide(0);
+  }, 1100);
 });
 
-// Resize safety
-window.addEventListener("resize", () => {
-  if (!opened) return;
-  const height = window.innerHeight * 0.75;
-  const width = height * 1.6;
-  flipbook.turn("size", width, height);
-});
+/* NAV */
+navRight.onclick = next;
+navLeft.onclick = prev;
 </script>
 
 </body>
