@@ -22,6 +22,7 @@ body {
   font-family: "Georgia", serif;
 }
 
+/* ---------- SCENE ---------- */
 .scene {
   width: 100vw;
   height: 100vh;
@@ -29,55 +30,84 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+  perspective: 2000px;
 }
 
 /* ---------- BACK BUTTON ---------- */
 .back-btn {
   position: fixed;
   top: 18px;
-  right: 22px;
+  left: 22px;
   z-index: 50;
-  padding: 8px 16px;
-  font-size: 13px;
-  color: #5b3a73;
-  background: rgba(230, 215, 245, 0.85);
-  backdrop-filter: blur(10px);
+  padding: 8px 14px;
+  font-size: 16px;
+  color: #b03060;
+  background: rgba(255, 210, 225, 0.45);
+  backdrop-filter: blur(16px);
   border-radius: 999px;
   text-decoration: none;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.25);
-  transition: transform 0.2s ease, opacity 0.2s ease;
+  box-shadow: 0 8px 24px rgba(176,48,96,0.25);
 }
 
-.back-btn:hover {
-  transform: translateY(-1px);
-  opacity: 0.9;
-}
-
-/* ---------- COVER ---------- */
+/* ---------- BOOK ---------- */
 .book {
   position: relative;
   cursor: pointer;
-  transition: transform 0.6s ease, opacity 0.4s ease;
   z-index: 5;
-}
-
-.cover {
-  transform-origin: left center;
-  transition: transform 0.9s ease;
-}
-
-.cover img {
-  display: block;
-  border-radius: 12px;
-  box-shadow: 0 40px 80px rgba(0,0,0,0.35);
+  transition: transform 0.6s ease, opacity 0.4s ease;
 }
 
 .book.shift-right {
   transform: translateX(180px);
 }
 
+/* ---------- INNER BROWN PAGE (NEW) ---------- */
+.inner-page {
+  position: absolute;
+  inset: 6px; /* slight inset = stacked paper feel */
+  background: rgba(168, 140, 105, 0.55); /* brown similar to bg */
+  border-radius: 14px;
+  z-index: 0;
+  box-shadow: inset 0 0 0 1px rgba(120, 90, 60, 0.25);
+}
+
+/* ---------- COVER ---------- */
+.cover {
+  position: relative;
+  z-index: 1;
+  transform-origin: left center;
+  transform-style: preserve-3d;
+  transition: transform 1.1s cubic-bezier(.4,0,.2,1);
+}
+
+.cover img {
+  display: block;
+  border-radius: 14px;
+  box-shadow: 0 40px 80px rgba(0,0,0,0.35);
+}
+
+/* SHADOW FOR PAGE DEPTH */
+.cover::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to right,
+    rgba(0,0,0,0.35),
+    rgba(0,0,0,0.08) 30%,
+    transparent 65%
+  );
+  opacity: 0;
+  transition: opacity 0.6s ease;
+  pointer-events: none;
+}
+
 .book.open .cover {
-  transform: rotateY(-160deg);
+  transform: rotateY(-140deg);
+}
+
+.book.open .cover::after {
+  opacity: 1;
 }
 
 /* ---------- FLIPBOOK ---------- */
@@ -85,7 +115,7 @@ body {
   position: absolute;
   display: none;
   overflow: hidden;
-  border-radius: 14px;
+  border-radius: 16px;
 }
 
 /* ---------- SLIDES ---------- */
@@ -109,24 +139,24 @@ body {
   background-repeat: no-repeat;
 }
 
-/* ---------- TURN HINT (PURPLE, CUTE) ---------- */
+/* ---------- TURN HINT ---------- */
 .turn-hint {
   position: absolute;
   bottom: 24px;
   left: 50%;
   transform: translateX(-50%);
-  padding: 9px 20px;
+  padding: 10px 22px;
   font-size: 13px;
-  color: #4b2a63; /* dark purple text */
-  background: rgba(216, 198, 238, 0.9); /* light purple */
-  backdrop-filter: blur(12px);
+  color: #b03060;
+  background: rgba(255, 205, 220, 0.55);
+  backdrop-filter: blur(18px);
   border-radius: 999px;
   letter-spacing: 0.4px;
   opacity: 0;
   animation: hintFade 1.2s ease forwards, float 3s ease-in-out infinite;
   z-index: 20;
   pointer-events: none;
-  box-shadow: 0 10px 28px rgba(75,42,99,0.25);
+  box-shadow: 0 10px 28px rgba(176,48,96,0.25);
 }
 
 @keyframes hintFade {
@@ -134,9 +164,7 @@ body {
 }
 
 @keyframes float {
-  50% {
-    transform: translateX(-50%) translateY(-4px);
-  }
+  50% { transform: translateX(-50%) translateY(-4px); }
 }
 
 .turn-hint.hide {
@@ -165,12 +193,13 @@ body {
 
 <body>
 
-<a href="home.html" class="back-btn">← Back</a>
+<a href="home.html" class="back-btn">←</a>
 
 <div class="scene">
 
-  <!-- COVER -->
+  <!-- BOOK -->
   <div class="book" id="book">
+    <div class="inner-page"></div> <!-- 👈 NEW -->
     <div class="cover">
       <img id="coverImg" src="book-cover.png">
     </div>
@@ -178,17 +207,13 @@ body {
 
   <!-- FLIPBOOK -->
   <div id="flipbook">
-
     <div class="slide"><div class="slide-inner" style="background-image:url('jaipur.png')"></div></div>
     <div class="slide"><div class="slide-inner" style="background-image:url('agra.png')"></div></div>
     <div class="slide"><div class="slide-inner" style="background-image:url('udaipur.png')"></div></div>
     <div class="slide"><div class="slide-inner" style="background-image:url('us.png')"></div></div>
     <div class="slide"><div class="slide-inner" style="background-image:url('him.png')"></div></div>
 
-    <div class="turn-hint" id="turnHint">
-      Click to turn the page
-    </div>
-
+    <div class="turn-hint" id="turnHint">Click to turn the page</div>
     <div class="nav left"></div>
     <div class="nav right"></div>
   </div>
@@ -208,9 +233,9 @@ let opened = false;
 let current = 0;
 let hintVisible = true;
 
-/* SIZE — SLIGHTLY BIGGER THAN BEFORE */
+/* SIZE */
 window.addEventListener("load", () => {
-  const h = window.innerHeight * 0.93; // 👈 fills space more
+  const h = window.innerHeight * 0.92;
   const ratio = coverImg.naturalWidth / coverImg.naturalHeight;
   const pageWidth = h * ratio;
 
@@ -251,7 +276,7 @@ function prev() {
   }
 }
 
-/* OPEN BOOK + FULLSCREEN */
+/* OPEN BOOK */
 book.addEventListener("click", () => {
   if (opened) return;
   opened = true;
@@ -259,7 +284,7 @@ book.addEventListener("click", () => {
   document.documentElement.requestFullscreen?.();
 
   book.classList.add("shift-right");
-  setTimeout(() => book.classList.add("open"), 300);
+  setTimeout(() => book.classList.add("open"), 200);
 
   setTimeout(() => {
     book.style.opacity = "0";
