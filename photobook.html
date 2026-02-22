@@ -19,7 +19,7 @@ body {
   justify-content: center;
   align-items: center;
   overflow: hidden;
-  font-family: serif;
+  font-family: "Georgia", serif;
 }
 
 .scene {
@@ -80,69 +80,85 @@ body {
 /* ---------- FLIPBOOK ---------- */
 #flipbook {
   position: absolute;
-  width: 85vw;
-  max-width: 1100px;
-  height: 70vh;
-  max-height: 720px;
+  width: 90vw;
+  max-width: 1200px;
+  height: 78vh;
+  max-height: 820px;
   display: none;
   overflow: hidden;
 }
 
+/* ---------- SLIDES ---------- */
 .slide {
   position: absolute;
   inset: 0;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  --scale: 1;
+  --x: 0px;
+  --y: 0px;
+}
+
+.slide-inner {
+  width: 100%;
+  height: 100%;
   background-size: contain;
   background-position: center;
   background-repeat: no-repeat;
-  opacity: 0;
-  transform: translateX(80px);
-  transition: transform 0.6s ease, opacity 0.4s ease;
+  transform: translate(var(--x), var(--y)) scale(var(--scale));
+  transition: transform 0.35s ease;
   cursor: zoom-in;
 }
 
 .slide.active {
   opacity: 1;
-  transform: translateX(0);
   z-index: 2;
 }
 
 .slide.prev {
   opacity: 0;
-  transform: translateX(-80px);
   z-index: 1;
 }
 
 /* ---------- ZOOM ---------- */
-.slide.zoomed {
-  transform: scale(1.8);
+.slide.zoomed .slide-inner {
   cursor: grab;
 }
 
-.slide.zoomed:active {
+.slide.zoomed .slide-inner:active {
   cursor: grabbing;
 }
 
-/* ---------- ONE-TIME TURN HINT ---------- */
+/* ---------- AESTHETIC HINT ---------- */
 .turn-hint {
   position: absolute;
-  bottom: 24px;
+  bottom: 28px;
   left: 50%;
   transform: translateX(-50%);
-  padding: 10px 18px;
+  padding: 12px 22px;
   font-size: 14px;
   color: #fff;
-  background: rgba(0,0,0,0.45);
-  backdrop-filter: blur(6px);
-  border-radius: 20px;
-  letter-spacing: 0.3px;
+  background: rgba(20,20,20,0.55);
+  backdrop-filter: blur(8px);
+  border-radius: 24px;
+  letter-spacing: 0.4px;
   opacity: 0;
-  animation: fadeIn 1.2s ease forwards;
+  animation: hintFade 1.2s ease forwards, float 2.4s ease-in-out infinite;
   z-index: 20;
   pointer-events: none;
 }
 
-@keyframes fadeIn {
+.turn-hint span {
+  opacity: 0.8;
+  margin-left: 6px;
+}
+
+@keyframes hintFade {
   to { opacity: 1; }
+}
+
+@keyframes float {
+  50% { transform: translateX(-50%) translateY(-6px); }
 }
 
 .turn-hint.hide {
@@ -153,7 +169,7 @@ body {
   to { opacity: 0; transform: translateX(-50%) translateY(10px); }
 }
 
-/* ---------- NAV ZONES ---------- */
+/* ---------- NAV ---------- */
 .nav {
   position: absolute;
   top: 0;
@@ -174,23 +190,34 @@ body {
   <!-- COVER -->
   <div class="book" id="book">
     <div class="cover">
-      <img id="coverImg" src="book-cover.png" alt="Cover">
+      <img id="coverImg" src="book-cover.png">
     </div>
     <div class="hint">Tap to open</div>
   </div>
 
   <!-- FLIPBOOK -->
   <div id="flipbook">
-    <div class="slide" style="background-image:url('jaipur.png')"></div>
-    <div class="slide" style="background-image:url('agra.png')"></div>
-    <div class="slide" style="background-image:url('udaipur.png')"></div>
-    <div class="slide" style="background-image:url('us.png')"></div>
-    <div class="slide" style="background-image:url('him.png')"></div>
 
-    <!-- One-time hint -->
-    <div class="turn-hint" id="turnHint">Click to turn the page</div>
+    <div class="slide">
+      <div class="slide-inner" style="background-image:url('jaipur.png')"></div>
+    </div>
+    <div class="slide">
+      <div class="slide-inner" style="background-image:url('agra.png')"></div>
+    </div>
+    <div class="slide">
+      <div class="slide-inner" style="background-image:url('udaipur.png')"></div>
+    </div>
+    <div class="slide">
+      <div class="slide-inner" style="background-image:url('us.png')"></div>
+    </div>
+    <div class="slide">
+      <div class="slide-inner" style="background-image:url('him.png')"></div>
+    </div>
 
-    <!-- Click zones -->
+    <div class="turn-hint" id="turnHint">
+      Click to turn the page <span>→</span>
+    </div>
+
     <div class="nav left"></div>
     <div class="nav right"></div>
   </div>
@@ -204,14 +231,14 @@ const flipbook = document.getElementById("flipbook");
 const slides = document.querySelectorAll(".slide");
 const navLeft = document.querySelector(".nav.left");
 const navRight = document.querySelector(".nav.right");
-const turnHint = document.getElementById("turnHint");
+const hint = document.getElementById("turnHint");
 
 let opened = false;
 let current = 0;
 let zoomed = false;
-let hintShown = true;
+let hintVisible = true;
 
-/* ---------- COVER SIZE ---------- */
+/* COVER SIZE */
 window.addEventListener("load", () => {
   const h = window.innerHeight * 0.88;
   const ratio = coverImg.naturalWidth / coverImg.naturalHeight;
@@ -221,55 +248,48 @@ window.addEventListener("load", () => {
   book.style.width = h * ratio + "px";
 });
 
-/* ---------- FULLSCREEN ---------- */
-function goFullscreen() {
-  if (!document.fullscreenElement) {
-    document.documentElement.requestFullscreen?.();
-  }
-}
-
-/* ---------- SLIDES ---------- */
-function showSlide(index) {
-  slides.forEach((s, i) => {
+function showSlide(i) {
+  slides.forEach((s, idx) => {
     s.classList.remove("active", "prev", "zoomed");
-    if (i === index) s.classList.add("active");
-    if (i === index - 1) s.classList.add("prev");
+    s.style.setProperty("--scale", 1);
+    s.style.setProperty("--x", "0px");
+    s.style.setProperty("--y", "0px");
+    if (idx === i) s.classList.add("active");
+    if (idx === i - 1) s.classList.add("prev");
   });
   zoomed = false;
 }
 
-/* ---------- HINT HIDE ---------- */
-function hideHintOnce() {
-  if (!hintShown) return;
-  hintShown = false;
-  turnHint.classList.add("hide");
+function hideHint() {
+  if (!hintVisible) return;
+  hintVisible = false;
+  hint.classList.add("hide");
 }
 
-/* ---------- NAV ---------- */
-function nextSlide() {
+function next() {
   if (zoomed) return;
-  hideHintOnce();
+  hideHint();
   if (current < slides.length - 1) {
     current++;
     showSlide(current);
   }
 }
 
-function prevSlide() {
+function prev() {
   if (zoomed) return;
-  hideHintOnce();
+  hideHint();
   if (current > 0) {
     current--;
     showSlide(current);
   }
 }
 
-/* ---------- OPEN BOOK ---------- */
+/* OPEN BOOK */
 book.addEventListener("click", () => {
   if (opened) return;
   opened = true;
 
-  goFullscreen();
+  document.documentElement.requestFullscreen?.();
   book.classList.add("shift-right");
   setTimeout(() => book.classList.add("open"), 300);
 
@@ -281,36 +301,17 @@ book.addEventListener("click", () => {
   }, 1100);
 });
 
-/* ---------- CLICK ZONES ---------- */
-navRight.addEventListener("click", nextSlide);
-navLeft.addEventListener("click", prevSlide);
+/* NAV */
+navRight.onclick = next;
+navLeft.onclick = prev;
 
-/* ---------- KEYBOARD ---------- */
-document.addEventListener("keydown", e => {
-  if (!opened) return;
-  if (e.key === "ArrowRight") nextSlide();
-  if (e.key === "ArrowLeft") prevSlide();
-});
-
-/* ---------- ZOOM ---------- */
+/* ZOOM */
 slides.forEach(slide => {
+  const inner = slide.querySelector(".slide-inner");
   slide.addEventListener("dblclick", () => {
-    slide.classList.toggle("zoomed");
-    zoomed = slide.classList.contains("zoomed");
+    zoomed = !slide.classList.toggle("zoomed");
+    slide.style.setProperty("--scale", zoomed ? 1.8 : 1);
   });
-});
-
-/* ---------- MOBILE SWIPE ---------- */
-let startX = 0;
-document.addEventListener("touchstart", e => {
-  startX = e.touches[0].clientX;
-});
-
-document.addEventListener("touchend", e => {
-  if (zoomed) return;
-  const diff = e.changedTouches[0].clientX - startX;
-  if (diff < -40) nextSlide();
-  if (diff > 40) prevSlide();
 });
 </script>
 
