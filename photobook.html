@@ -19,41 +19,165 @@ body {
   justify-content: center;
   align-items: center;
   overflow: hidden;
-  font-family: Georgia, serif;
+  font-family: "Georgia", serif;
 }
 
 .scene {
   width: 100vw;
   height: 100vh;
+  position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
+/* ---------- COVER ---------- */
+.book {
+  position: relative;
+  cursor: pointer;
+  transition: transform 0.6s ease, opacity 0.4s ease;
+  z-index: 5;
+}
+
+.book::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: #c7b08a;
+  border-radius: 10px;
+  z-index: -1;
+}
+
+.cover {
+  transform-origin: left center;
+  transition: transform 0.9s ease;
+}
+
+.cover img {
+  display: block;
+  border-radius: 10px;
+  box-shadow: 0 40px 80px rgba(0,0,0,0.35);
+}
+
+.book.shift-right {
+  transform: translateX(260px);
+}
+
+.book.open .cover {
+  transform: rotateY(-160deg);
+}
+
+.hint {
+  position: absolute;
+  bottom: -36px;
+  width: 100%;
+  text-align: center;
+  font-size: 14px;
+  color: #fff;
+  opacity: 0.7;
+}
+
 /* ---------- FLIPBOOK ---------- */
 #flipbook {
-  width: 90vw;
-  max-width: 1200px;
-  height: 75vh;
-  max-height: 800px;
+  position: absolute;
+  display: none;
+  overflow: hidden;
+  border-radius: 10px;
 }
 
-.page {
+/* ---------- SLIDES ---------- */
+.slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.slide.active {
+  opacity: 1;
+  z-index: 2;
+}
+
+.slide.prev {
+  z-index: 1;
+}
+
+.slide-inner {
   width: 100%;
   height: 100%;
-  background: #fff;
+  background-size: cover;           /* FULL PAGE LIKE BOOK COVER */
+  background-position: center;
+  background-repeat: no-repeat;
+  transform: scale(0.98);           /* soft margin, premium feel */
+  transition: transform 0.35s ease;
+  cursor: zoom-in;
 }
 
-.page img {
-  width: 100%;
+/* ---------- ZOOM ---------- */
+.slide.zoomed .slide-inner {
+  transform: scale(1.8);
+  cursor: grab;
+}
+
+.slide.zoomed .slide-inner:active {
+  cursor: grabbing;
+}
+
+/* ---------- TURN HINT ---------- */
+.turn-hint {
+  position: absolute;
+  bottom: 26px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 10px 22px;
+  font-size: 13px;
+  color: rgba(255,255,255,0.7);
+  background: rgba(8,8,8,0.32);
+  backdrop-filter: blur(12px);
+  border-radius: 30px;
+  letter-spacing: 0.6px;
+  opacity: 0;
+  animation: hintFade 1.4s ease forwards, float 3s ease-in-out infinite;
+  z-index: 20;
+  pointer-events: none;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+}
+
+.turn-hint span {
+  opacity: 0.6;
+  margin-left: 6px;
+}
+
+@keyframes hintFade {
+  to { opacity: 1; }
+}
+
+@keyframes float {
+  50% { transform: translateX(-50%) translateY(-6px); }
+}
+
+.turn-hint.hide {
+  animation: fadeOut 0.6s ease forwards;
+}
+
+@keyframes fadeOut {
+  to {
+    opacity: 0;
+    transform: translateX(-50%) translateY(10px);
+  }
+}
+
+/* ---------- NAV ---------- */
+.nav {
+  position: absolute;
+  top: 0;
+  width: 50%;
   height: 100%;
-  object-fit: cover;
+  z-index: 10;
 }
 
-/* Optional subtle shadow */
-#flipbook .page {
-  box-shadow: inset 0 0 20px rgba(0,0,0,0.08);
-}
+.nav.left { left: 0; }
+.nav.right { right: 0; }
 </style>
 </head>
 
@@ -61,56 +185,136 @@ body {
 
 <div class="scene">
 
+  <!-- COVER -->
+  <div class="book" id="book">
+    <div class="cover">
+      <img id="coverImg" src="book-cover.png">
+    </div>
+    <div class="hint">Tap to open</div>
+  </div>
+
+  <!-- FLIPBOOK -->
   <div id="flipbook">
 
-    <!-- JAIPUR -->
-    <div class="page"><img src="jaipur-l.png"></div>
-    <div class="page"><img src="jaipur-r.png"></div>
+    <div class="slide">
+      <div class="slide-inner" style="background-image:url('jaipur.png')"></div>
+    </div>
+    <div class="slide">
+      <div class="slide-inner" style="background-image:url('agra.png')"></div>
+    </div>
+    <div class="slide">
+      <div class="slide-inner" style="background-image:url('udaipur.png')"></div>
+    </div>
+    <div class="slide">
+      <div class="slide-inner" style="background-image:url('us.png')"></div>
+    </div>
+    <div class="slide">
+      <div class="slide-inner" style="background-image:url('him.png')"></div>
+    </div>
 
-    <!-- AGRA -->
-    <div class="page"><img src="agra-l.png"></div>
-    <div class="page"><img src="agra-r.png"></div>
+    <div class="turn-hint" id="turnHint">
+      Click to turn the page <span>→</span>
+    </div>
 
-    <!-- UDAIPUR -->
-    <div class="page"><img src="udaipur-l.png"></div>
-    <div class="page"><img src="udaipur-r.png"></div>
-
-    <!-- US -->
-    <div class="page"><img src="us-l.png"></div>
-    <div class="page"><img src="us-r.png"></div>
-
-    <!-- HIM -->
-    <div class="page"><img src="him-l.png"></div>
-    <div class="page"><img src="him-r.png"></div>
-
+    <div class="nav left"></div>
+    <div class="nav right"></div>
   </div>
 
 </div>
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/turn.js/4.1.0/turn.min.js"></script>
-
 <script>
-const flipbook = $("#flipbook");
+const book = document.getElementById("book");
+const coverImg = document.getElementById("coverImg");
+const flipbook = document.getElementById("flipbook");
+const slides = document.querySelectorAll(".slide");
+const navLeft = document.querySelector(".nav.left");
+const navRight = document.querySelector(".nav.right");
+const hint = document.getElementById("turnHint");
 
-function initBook() {
-  const height = window.innerHeight * 0.78;
-  const width = height * 1.6;
+let opened = false;
+let current = 0;
+let zoomed = false;
+let hintVisible = true;
+let bookHeight = 0;
+let bookWidth = 0;
 
-  flipbook.turn({
-    width: width,
-    height: height,
-    autoCenter: true,
-    gradients: true,
-    duration: 900
+/* COVER SIZE + MATCH FLIPBOOK */
+window.addEventListener("load", () => {
+  const h = window.innerHeight * 0.88;
+  const ratio = coverImg.naturalWidth / coverImg.naturalHeight;
+
+  bookHeight = h;
+  bookWidth = h * ratio;
+
+  coverImg.style.height = h + "px";
+  coverImg.style.width = bookWidth + "px";
+  book.style.height = h + "px";
+  book.style.width = bookWidth + "px";
+
+  flipbook.style.height = h + "px";
+  flipbook.style.width = bookWidth + "px";
+});
+
+function showSlide(i) {
+  slides.forEach((s, idx) => {
+    s.classList.remove("active", "prev", "zoomed");
+    if (idx === i) s.classList.add("active");
+    if (idx === i - 1) s.classList.add("prev");
   });
+  zoomed = false;
 }
 
-window.addEventListener("load", initBook);
-window.addEventListener("resize", () => {
-  const height = window.innerHeight * 0.78;
-  const width = height * 1.6;
-  flipbook.turn("size", width, height);
+function hideHint() {
+  if (!hintVisible) return;
+  hintVisible = false;
+  hint.classList.add("hide");
+}
+
+function next() {
+  if (zoomed) return;
+  hideHint();
+  if (current < slides.length - 1) {
+    current++;
+    showSlide(current);
+  }
+}
+
+function prev() {
+  if (zoomed) return;
+  hideHint();
+  if (current > 0) {
+    current--;
+    showSlide(current);
+  }
+}
+
+/* OPEN BOOK */
+book.addEventListener("click", () => {
+  if (opened) return;
+  opened = true;
+
+  document.documentElement.requestFullscreen?.();
+  book.classList.add("shift-right");
+
+  setTimeout(() => book.classList.add("open"), 300);
+
+  setTimeout(() => {
+    book.style.opacity = "0";
+    book.style.pointerEvents = "none";
+    flipbook.style.display = "block";
+    showSlide(0);
+  }, 1100);
+});
+
+/* NAV */
+navRight.onclick = next;
+navLeft.onclick = prev;
+
+/* ZOOM */
+slides.forEach(slide => {
+  slide.addEventListener("dblclick", () => {
+    zoomed = !slide.classList.toggle("zoomed");
+  });
 });
 </script>
 
