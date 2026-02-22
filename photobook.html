@@ -194,11 +194,32 @@ body {
 }
 .nav.left { left: 0; }
 .nav.right { right: 0; }
+  .mute-btn {
+  position: fixed;
+  top: 18px;
+  right: 22px;           /* 👈 TOP RIGHT */
+  z-index: 50;
+  padding: 8px 14px;
+  font-size: 16px;
+  color: #b03060;        /* dark pink */
+  background: rgba(255, 205, 220, 0.45); /* glassy light pink */
+  backdrop-filter: blur(14px);
+  border-radius: 999px;
+  cursor: pointer;
+  user-select: none;
+  box-shadow: 0 8px 24px rgba(176, 48, 96, 0.25);
+  transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+.mute-btn:hover {
+  transform: translateY(-1px);
+  opacity: 0.9;
+}
 </style>
 </head>
 
 <body>
-
+<div class="mute-btn" id="muteBtn">🔊</div>
 <a href="home.html" class="back-btn">←</a>
 
 <div class="scene">
@@ -251,7 +272,14 @@ audio.volume = 0.8;
 let opened = false;
 let current = 0;
 let hintVisible = true;
+const muteBtn = document.getElementById("muteBtn");
+let muted = false;
 
+muteBtn.addEventListener("click", () => {
+  muted = !muted;
+  audio.muted = muted;
+  muteBtn.textContent = muted ? "🔇" : "🔊";
+});
 /* SIZE */
 window.addEventListener("load", () => {
   const h = window.innerHeight * 0.92;
@@ -270,6 +298,7 @@ function playSong(index) {
   audio.src = songs[index];
   audio.currentTime = 0;
   audio.play();
+  audio.muted = muted;
 }
 
 function showSlide(i) {
