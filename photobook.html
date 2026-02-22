@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Photobook</title>
 
 <style>
@@ -22,77 +22,76 @@ body {
   font-family: serif;
 }
 
+/* STABLE CONTAINER */
 .scene {
-  perspective: 3200px;
-  position: relative;
   width: 100vw;
   height: 100vh;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-/* Book */
+/* BOOK COVER */
 .book {
   position: relative;
-  transform-style: preserve-3d;
   cursor: pointer;
-  transition: transform 0.6s ease;
+  transform-style: preserve-3d;
+  transition: transform 0.6s ease, opacity 0.4s ease;
   z-index: 5;
 }
 
-/* Backing plate (prevents white strip) */
 .book::before {
   content: "";
   position: absolute;
   inset: 0;
   background: #c7b08a;
   border-radius: 8px;
-  transform: translateZ(-1px);
+  z-index: -1;
 }
 
-/* Cover */
+/* COVER IMAGE */
 .cover {
   transform-origin: left center;
   transition: transform 0.9s ease;
 }
 
 .cover img {
-  display: block;
-  height: 100%;
+  height: 88vh;
   width: auto;
+  display: block;
   border-radius: 8px;
-  box-shadow: 0 45px 90px rgba(0,0,0,0.35);
-  backface-visibility: hidden;
+  box-shadow: 0 40px 80px rgba(0,0,0,0.35);
 }
 
-/* Slide right before opening */
+/* SLIDE RIGHT */
 .book.shift-right {
   transform: translateX(180px);
 }
 
-/* Open animation */
+/* OPEN */
 .book.open .cover {
   transform: rotateY(-160deg);
 }
 
-/* Hint */
+/* HINT */
 .hint {
   position: absolute;
-  bottom: -38px;
+  bottom: -36px;
   width: 100%;
   text-align: center;
   font-size: 14px;
-  opacity: 0.7;
   color: #fff;
+  opacity: 0.7;
 }
 
-/* Flipbook */
+/* FLIPBOOK — MUST BE RELATIVE */
 #flipbook {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
   display: none;
+  position: relative;
 }
 
+/* TURN.JS PAGE */
 .page {
   background-size: contain;
   background-position: center;
@@ -104,15 +103,16 @@ body {
 <body>
 
 <div class="scene">
-  <!-- COVER -->
+
+  <!-- BOOK COVER -->
   <div class="book" id="book">
     <div class="cover">
-      <img id="coverImg" src="book-cover.png" alt="Cover">
+      <img src="book-cover.png" alt="Cover" />
     </div>
     <div class="hint">Tap to open</div>
   </div>
 
-  <!-- PHOTOBOOK -->
+  <!-- FLIPBOOK -->
   <div id="flipbook">
     <div class="page" style="background-image:url('jaipur.png')"></div>
     <div class="page" style="background-image:url('agra.png')"></div>
@@ -120,6 +120,7 @@ body {
     <div class="page" style="background-image:url('us.png')"></div>
     <div class="page" style="background-image:url('him.png')"></div>
   </div>
+
 </div>
 
 <!-- REQUIRED SCRIPTS -->
@@ -128,31 +129,21 @@ body {
 
 <script>
 const book = document.getElementById("book");
-const coverImg = document.getElementById("coverImg");
 const flipbook = document.getElementById("flipbook");
 
-let hasGoneFullscreen = false;
-let bookHeight;
+let opened = false;
 
-/* Lock size once */
-window.addEventListener("load", () => {
-  bookHeight = window.innerHeight * 0.88;
-  coverImg.style.height = bookHeight + "px";
-  book.style.height = bookHeight + "px";
-});
-
-/* Fullscreen */
 function goFullscreen() {
-  if (hasGoneFullscreen) return;
-  const el = document.documentElement;
-  if (el.requestFullscreen) el.requestFullscreen();
-  else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
-  hasGoneFullscreen = true;
+  if (document.fullscreenElement) return;
+  document.documentElement.requestFullscreen?.();
 }
 
-/* Open book */
 book.addEventListener("click", () => {
+  if (opened) return;
+  opened = true;
+
   goFullscreen();
+
   book.classList.add("shift-right");
 
   setTimeout(() => {
@@ -160,24 +151,32 @@ book.addEventListener("click", () => {
   }, 300);
 
   setTimeout(() => {
-    book.style.display = "none";
+    // fade cover, DO NOT remove from DOM
+    book.style.opacity = "0";
+    book.style.pointerEvents = "none";
+
+    // show flipbook BEFORE init
     flipbook.style.display = "block";
 
-    flipbook.style.width = book.offsetWidth + "px";
+    const bookWidth = book.offsetWidth;
+    const bookHeight = book.offsetHeight;
+
+    flipbook.style.width = bookWidth + "px";
     flipbook.style.height = bookHeight + "px";
 
     $("#flipbook").turn({
-      width: book.offsetWidth,
+      width: bookWidth,
       height: bookHeight,
       display: "single",
       autoCenter: true,
       duration: 900,
       gradients: true
     });
+
   }, 1100);
 });
 
-/* Click left / right to turn pages */
+/* CLICK LEFT / RIGHT */
 flipbook.addEventListener("click", (e) => {
   const rect = flipbook.getBoundingClientRect();
   const x = e.clientX - rect.left;
