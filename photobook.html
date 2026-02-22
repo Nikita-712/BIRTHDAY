@@ -22,26 +22,22 @@ body {
   font-family: serif;
 }
 
-/* STABLE SCENE */
+/* SCENE */
 .scene {
   width: 100vw;
   height: 100vh;
   position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
 }
 
 /* BOOK COVER */
 .book {
-  position: relative;
+  position: absolute;
   cursor: pointer;
-  transform-style: preserve-3d;
   transition: transform 0.6s ease, opacity 0.4s ease;
   z-index: 5;
 }
 
-/* backing plate (no white strip) */
+/* backing plate */
 .book::before {
   content: "";
   position: absolute;
@@ -51,7 +47,7 @@ body {
   z-index: -1;
 }
 
-/* COVER */
+/* cover */
 .cover {
   transform-origin: left center;
   transition: transform 0.9s ease;
@@ -63,7 +59,7 @@ body {
   box-shadow: 0 40px 80px rgba(0,0,0,0.35);
 }
 
-/* slide right */
+/* slide right before open */
 .book.shift-right {
   transform: translateX(180px);
 }
@@ -90,7 +86,7 @@ body {
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-40%, -50%);
+  transform: translate(-50%, -50%);
 }
 
 /* PAGE */
@@ -108,7 +104,7 @@ body {
 
 <div class="scene">
 
-  <!-- BOOK COVER -->
+  <!-- COVER -->
   <div class="book" id="book">
     <div class="cover">
       <img id="coverImg" src="book-cover.png" alt="Cover">
@@ -116,7 +112,7 @@ body {
     <div class="hint">Tap to open</div>
   </div>
 
-  <!-- FLIPBOOK PAGES -->
+  <!-- FLIPBOOK (OPEN SPREADS) -->
   <div id="flipbook">
     <div class="page" style="background-image:url('jaipur.png')"></div>
     <div class="page" style="background-image:url('agra.png')"></div>
@@ -127,7 +123,6 @@ body {
 
 </div>
 
-<!-- SCRIPTS -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="turn.min.js"></script>
 
@@ -136,59 +131,51 @@ const book = document.getElementById("book");
 const coverImg = document.getElementById("coverImg");
 const flipbook = document.getElementById("flipbook");
 
-let fixedBookWidth;
-let fixedBookHeight;
+let bookWidth, bookHeight;
 let opened = false;
 
-/* LOCK BOOK SIZE ON LOAD */
+/* lock size */
 window.addEventListener("load", () => {
-  fixedBookHeight = window.innerHeight * 0.88;
+  bookHeight = window.innerHeight * 0.88;
+  const ratio = coverImg.naturalWidth / coverImg.naturalHeight;
+  bookWidth = bookHeight * ratio;
 
-  const img = coverImg;
-  const ratio = img.naturalWidth / img.naturalHeight;
+  coverImg.style.height = bookHeight + "px";
+  coverImg.style.width = bookWidth + "px";
 
-  fixedBookWidth = fixedBookHeight * ratio;
-
-  img.style.height = fixedBookHeight + "px";
-  img.style.width = fixedBookWidth + "px";
-
-  book.style.width = fixedBookWidth + "px";
-  book.style.height = fixedBookHeight + "px";
+  book.style.width = bookWidth + "px";
+  book.style.height = bookHeight + "px";
 });
 
-/* FULLSCREEN */
+/* fullscreen */
 function goFullscreen() {
-  if (document.fullscreenElement) return;
-  document.documentElement.requestFullscreen?.();
+  if (!document.fullscreenElement) {
+    document.documentElement.requestFullscreen?.();
+  }
 }
 
-/* OPEN BOOK */
+/* open book */
 book.addEventListener("click", () => {
   if (opened) return;
   opened = true;
 
   goFullscreen();
-
   book.classList.add("shift-right");
 
-  setTimeout(() => {
-    book.classList.add("open");
-  }, 300);
+  setTimeout(() => book.classList.add("open"), 300);
 
   setTimeout(() => {
-    /* fade cover, keep layout */
     book.style.opacity = "0";
     book.style.pointerEvents = "none";
 
-    /* show flipbook */
     flipbook.style.display = "block";
-    flipbook.style.width = fixedBookWidth + "px";
-    flipbook.style.height = fixedBookHeight + "px";
+    flipbook.style.width = bookWidth + "px";
+    flipbook.style.height = bookHeight + "px";
 
     $("#flipbook").turn({
-      width: fixedBookWidth,
-      height: fixedBookHeight,
-      display: "single",
+      width: bookWidth,
+      height: bookHeight,
+      display: "double",   // ✅ CRITICAL FIX
       autoCenter: false,
       duration: 900,
       gradients: true
@@ -196,16 +183,11 @@ book.addEventListener("click", () => {
   }, 1100);
 });
 
-/* CLICK LEFT / RIGHT */
+/* click to turn */
 flipbook.addEventListener("click", (e) => {
   const rect = flipbook.getBoundingClientRect();
   const x = e.clientX - rect.left;
-
-  if (x > rect.width / 2) {
-    $("#flipbook").turn("next");
-  } else {
-    $("#flipbook").turn("previous");
-  }
+  x > rect.width / 2 ? $("#flipbook").turn("next") : $("#flipbook").turn("previous");
 });
 </script>
 
