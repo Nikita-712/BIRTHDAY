@@ -15,43 +15,39 @@
 body {
   height: 100vh;
   background: url("photobook-bg.png") center/cover no-repeat;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   overflow: hidden;
   font-family: serif;
 }
 
-/* Scene */
+/* SCENE */
 .scene {
-  position: relative;
   width: 100vw;
   height: 100vh;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-/* Center anchor */
-.center {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
-
-/* Closed book */
+/* BOOK COVER */
 .book {
   position: relative;
   cursor: pointer;
   transition: transform 0.6s ease, opacity 0.4s ease;
 }
 
-/* Back plate */
 .book::before {
   content: "";
   position: absolute;
   inset: 0;
   background: #c7b08a;
-  border-radius: 8px;
+  border-radius: 10px;
   z-index: -1;
 }
 
-/* Cover */
 .cover {
   transform-origin: left center;
   transition: transform 0.9s ease;
@@ -59,16 +55,20 @@ body {
 
 .cover img {
   display: block;
-  border-radius: 8px;
+  border-radius: 10px;
   box-shadow: 0 40px 80px rgba(0,0,0,0.35);
 }
 
-/* Opening animation */
+/* slide before opening */
+.book.shift-right {
+  transform: translateX(160px);
+}
+
+/* open animation */
 .book.open .cover {
   transform: rotateY(-160deg);
 }
 
-/* Hint */
 .hint {
   position: absolute;
   bottom: -36px;
@@ -79,16 +79,20 @@ body {
   opacity: 0.7;
 }
 
-/* Flipbook */
+/* FLIPBOOK */
 #flipbook {
   display: none;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
-/* Canva spreads */
+/* SINGLE SPREAD PAGE */
 .page {
   width: 100%;
   height: 100%;
-  background-size: contain;
+  background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
 }
@@ -98,71 +102,78 @@ body {
 <body>
 
 <div class="scene">
-  <div class="center">
 
-    <!-- COVER -->
-    <div class="book" id="book">
-      <div class="cover">
-        <img id="coverImg" src="book-cover.png" alt="Cover">
-      </div>
-      <div class="hint">Tap to open</div>
+  <!-- COVER -->
+  <div class="book" id="book">
+    <div class="cover">
+      <img id="coverImg" src="book-cover.png" alt="Cover">
     </div>
-
-    <!-- PHOTOBOOK -->
-    <div id="flipbook">
-      <div class="page" style="background-image:url('jaipur.png')"></div>
-      <div class="page" style="background-image:url('agra.png')"></div>
-      <div class="page" style="background-image:url('udaipur.png')"></div>
-      <div class="page" style="background-image:url('us.png')"></div>
-      <div class="page" style="background-image:url('him.png')"></div>
-    </div>
-
+    <div class="hint">Tap to open</div>
   </div>
+
+  <!-- FLIPBOOK (ONE CANVA SPREAD PER PAGE) -->
+  <div id="flipbook">
+    <div class="page" style="background-image:url('jaipur.png')"></div>
+    <div class="page" style="background-image:url('agra.png')"></div>
+    <div class="page" style="background-image:url('udaipur.png')"></div>
+    <div class="page" style="background-image:url('us.png')"></div>
+    <div class="page" style="background-image:url('him.png')"></div>
+  </div>
+
 </div>
 
+<!-- REQUIRED SCRIPTS -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="turn.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/turn.js/4.1.0/turn.min.js"></script>
 
 <script>
 const book = document.getElementById("book");
 const coverImg = document.getElementById("coverImg");
 const flipbook = document.getElementById("flipbook");
 
-let spreadWidth, spreadHeight;
+let coverHeight, coverWidth;
+let spreadHeight, spreadWidth;
 let opened = false;
 
-/* Lock size */
+/* LOCK COVER SIZE */
 window.addEventListener("load", () => {
-  spreadHeight = window.innerHeight * 0.88;
-
+  coverHeight = window.innerHeight * 0.88;
   const ratio = coverImg.naturalWidth / coverImg.naturalHeight;
-  spreadWidth = spreadHeight * ratio;
+  coverWidth = coverHeight * ratio;
 
-  coverImg.style.height = spreadHeight + "px";
-  coverImg.style.width = spreadWidth + "px";
+  coverImg.style.height = coverHeight + "px";
+  coverImg.style.width = coverWidth + "px";
 
-  book.style.width = spreadWidth + "px";
-  book.style.height = spreadHeight + "px";
+  book.style.height = coverHeight + "px";
+  book.style.width = coverWidth + "px";
 });
 
-/* Fullscreen */
+/* FULLSCREEN */
 function goFullscreen() {
   if (!document.fullscreenElement) {
     document.documentElement.requestFullscreen?.();
   }
 }
 
-/* Open */
+/* OPEN BOOK */
 book.addEventListener("click", () => {
   if (opened) return;
   opened = true;
 
   goFullscreen();
-  book.classList.add("open");
+  book.classList.add("shift-right");
+
+  setTimeout(() => {
+    book.classList.add("open");
+  }, 300);
 
   setTimeout(() => {
     book.style.opacity = "0";
     book.style.pointerEvents = "none";
+
+    /* SPREAD SIZE (CANVA LANDSCAPE) */
+    spreadHeight = window.innerHeight * 0.88;
+    spreadWidth = spreadHeight * 1.6; // landscape spread ratio
 
     flipbook.style.display = "block";
     flipbook.style.width = spreadWidth + "px";
@@ -171,15 +182,15 @@ book.addEventListener("click", () => {
     $("#flipbook").turn({
       width: spreadWidth,
       height: spreadHeight,
-      display: "single",   // ✅ IMPORTANT
+      display: "single",
       autoCenter: true,
       duration: 900,
       gradients: true
     });
-  }, 1000);
+  }, 1100);
 });
 
-/* Click navigation */
+/* CLICK LEFT / RIGHT */
 flipbook.addEventListener("click", (e) => {
   const rect = flipbook.getBoundingClientRect();
   const x = e.clientX - rect.left;
