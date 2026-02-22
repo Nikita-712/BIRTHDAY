@@ -61,19 +61,19 @@ body {
   transform: translateX(180px);
 }
 
-/* ---------- SOLID BACK COVER (NEW FIX) ---------- */
+/* ---------- SOLID BACK COVER (SMALLER) ---------- */
 .inner-page {
   position: absolute;
-  inset: 0;
-  background: #9b7a52; /* solid brown, NOT bg */
-  border-radius: 16px;
+  inset: 10px; /* 👈 smaller than book */
+  background: #9b7a52;
+  border-radius: 14px;
   z-index: 0;
   box-shadow:
     inset 0 0 0 1px rgba(70,50,30,0.25),
-    0 20px 40px rgba(0,0,0,0.25);
+    0 18px 36px rgba(0,0,0,0.25);
 }
 
-/* ---------- COVER (SLIGHTLY SMALLER) ---------- */
+/* ---------- COVER (SLIGHTLY SMALLER THAN BOOK) ---------- */
 .cover {
   position: absolute;
   inset: 2%;
@@ -92,7 +92,7 @@ body {
   box-shadow: 0 40px 80px rgba(0,0,0,0.35);
 }
 
-/* SHADOW FOR PAGE DEPTH */
+/* PAGE DEPTH SHADOW */
 .cover::after {
   content: "";
   position: absolute;
@@ -235,6 +235,19 @@ const navLeft = document.querySelector(".nav.left");
 const navRight = document.querySelector(".nav.right");
 const hint = document.getElementById("turnHint");
 
+/* 🎵 AUDIO SETUP */
+const songs = [
+  "jaipur-song.mp3",
+  "agra-song.mp3",
+  "udaipur-song.mp3",
+  "us-song.mp3",
+  "him-song.mp3"
+];
+
+const audio = new Audio();
+audio.loop = true;
+audio.volume = 0.8;
+
 let opened = false;
 let current = 0;
 let hintVisible = true;
@@ -252,10 +265,18 @@ window.addEventListener("load", () => {
   flipbook.style.width = pageWidth * 2 + "px";
 });
 
+function playSong(index) {
+  audio.pause();
+  audio.src = songs[index];
+  audio.currentTime = 0;
+  audio.play();
+}
+
 function showSlide(i) {
   slides.forEach((s, idx) => {
     s.classList.toggle("active", idx === i);
   });
+  playSong(i);
 }
 
 function hideHint() {
@@ -294,7 +315,7 @@ book.addEventListener("click", () => {
     book.style.opacity = "0";
     book.style.pointerEvents = "none";
     flipbook.style.display = "block";
-    showSlide(0);
+    showSlide(0); /* start first song */
   }, 1100);
 });
 
