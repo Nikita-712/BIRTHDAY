@@ -22,7 +22,6 @@ body {
   font-family: serif;
 }
 
-/* SCENE */
 .scene {
   width: 100vw;
   height: 100vh;
@@ -32,7 +31,7 @@ body {
   align-items: center;
 }
 
-/* BOOK COVER */
+/* COVER */
 .book {
   position: relative;
   cursor: pointer;
@@ -60,17 +59,14 @@ body {
   box-shadow: 0 40px 80px rgba(0,0,0,0.35);
 }
 
-/* SLIDE BEFORE OPEN */
 .book.shift-right {
   transform: translateX(260px);
 }
 
-/* OPEN ANIMATION */
 .book.open .cover {
   transform: rotateY(-160deg);
 }
 
-/* HINT */
 .hint {
   position: absolute;
   bottom: -36px;
@@ -83,18 +79,16 @@ body {
 
 /* FLIPBOOK */
 #flipbook {
-  display: none;
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+  display: none;
 }
 
-/* PAGE (FULL CANVA SPREAD) */
+/* IMPORTANT: let Turn.js control size */
 .page {
-  width: 100%;
-  height: 100%;
-  background-size: cover;
+  background-size: contain;
   background-position: center;
   background-repeat: no-repeat;
 }
@@ -105,7 +99,6 @@ body {
 
 <div class="scene">
 
-  <!-- COVER -->
   <div class="book" id="book">
     <div class="cover">
       <img id="coverImg" src="book-cover.png" alt="Cover">
@@ -113,7 +106,6 @@ body {
     <div class="hint">Tap to open</div>
   </div>
 
-  <!-- FLIPBOOK -->
   <div id="flipbook">
     <div class="page" style="background-image:url('jaipur.png')"></div>
     <div class="page" style="background-image:url('agra.png')"></div>
@@ -124,7 +116,6 @@ body {
 
 </div>
 
-<!-- SCRIPTS -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/turn.js/4.1.0/turn.min.js"></script>
 
@@ -133,11 +124,10 @@ const book = document.getElementById("book");
 const coverImg = document.getElementById("coverImg");
 const flipbook = document.getElementById("flipbook");
 
+let opened = false;
 let coverHeight, coverWidth;
 let spreadHeight, spreadWidth;
-let opened = false;
 
-/* LOCK COVER SIZE */
 window.addEventListener("load", () => {
   coverHeight = window.innerHeight * 0.88;
   const ratio = coverImg.naturalWidth / coverImg.naturalHeight;
@@ -150,14 +140,12 @@ window.addEventListener("load", () => {
   book.style.width = coverWidth + "px";
 });
 
-/* FULLSCREEN */
 function goFullscreen() {
   if (!document.fullscreenElement) {
     document.documentElement.requestFullscreen?.();
   }
 }
 
-/* OPEN BOOK */
 book.addEventListener("click", () => {
   if (opened) return;
   opened = true;
@@ -165,20 +153,17 @@ book.addEventListener("click", () => {
   goFullscreen();
   book.classList.add("shift-right");
 
-  setTimeout(() => {
-    book.classList.add("open");
-  }, 300);
+  setTimeout(() => book.classList.add("open"), 300);
 
   setTimeout(() => {
-    /* hide cover properly */
     book.style.opacity = "0";
     book.style.pointerEvents = "none";
 
-    /* CANVA SPREAD SIZE */
     spreadHeight = window.innerHeight * 0.92;
     spreadWidth = spreadHeight * 1.7;
 
     flipbook.style.display = "block";
+    flipbook.style.visibility = "hidden";
     flipbook.style.width = spreadWidth + "px";
     flipbook.style.height = spreadHeight + "px";
 
@@ -190,6 +175,14 @@ book.addEventListener("click", () => {
       duration: 900,
       gradients: true
     });
+
+    $("#flipbook").turn("resize");
+    $("#flipbook").turn("update");
+
+    setTimeout(() => {
+      flipbook.style.visibility = "visible";
+    }, 50);
+
   }, 1100);
 });
 </script>
