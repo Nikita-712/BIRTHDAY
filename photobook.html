@@ -26,6 +26,8 @@ body {
 .scene {
   perspective: 3200px;
   position: relative;
+  width: fit-content;
+  height: fit-content;
 }
 
 /* Book */
@@ -37,7 +39,7 @@ body {
   z-index: 5;
 }
 
-/* Backing plate */
+/* Backing plate (prevents white strip) */
 .book::before {
   content: "";
   position: absolute;
@@ -62,12 +64,12 @@ body {
   backface-visibility: hidden;
 }
 
-/* Slide right */
+/* Slide right before opening */
 .book.shift-right {
   transform: translateX(180px);
 }
 
-/* Open */
+/* Open animation */
 .book.open .cover {
   transform: rotateY(-160deg);
 }
@@ -120,9 +122,9 @@ body {
   </div>
 </div>
 
-<!-- ✅ REQUIRED SCRIPTS (ONCE, CORRECT ORDER) -->
+<!-- REQUIRED SCRIPTS -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/turn.js/4.1.0/turn.min.js"></script>
+<script src="turn.min.js"></script>
 
 <script>
 const book = document.getElementById("book");
@@ -160,6 +162,9 @@ book.addEventListener("click", () => {
   setTimeout(() => {
     book.style.display = "none";
     flipbook.style.display = "block";
+
+    flipbook.style.width = book.offsetWidth + "px";
+    flipbook.style.height = bookHeight + "px";
 
     $("#flipbook").turn({
       width: book.offsetWidth,
