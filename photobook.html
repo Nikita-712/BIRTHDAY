@@ -22,7 +22,7 @@ body {
   font-family: serif;
 }
 
-/* STABLE CONTAINER */
+/* STABLE SCENE */
 .scene {
   width: 100vw;
   height: 100vh;
@@ -41,6 +41,7 @@ body {
   z-index: 5;
 }
 
+/* backing plate (no white strip) */
 .book::before {
   content: "";
   position: absolute;
@@ -50,31 +51,29 @@ body {
   z-index: -1;
 }
 
-/* COVER IMAGE */
+/* COVER */
 .cover {
   transform-origin: left center;
   transition: transform 0.9s ease;
 }
 
 .cover img {
-  height: 88vh;
-  width: auto;
   display: block;
   border-radius: 8px;
   box-shadow: 0 40px 80px rgba(0,0,0,0.35);
 }
 
-/* SLIDE RIGHT */
+/* slide right */
 .book.shift-right {
   transform: translateX(180px);
 }
 
-/* OPEN */
+/* open animation */
 .book.open .cover {
   transform: rotateY(-160deg);
 }
 
-/* HINT */
+/* hint */
 .hint {
   position: absolute;
   bottom: -36px;
@@ -85,15 +84,18 @@ body {
   opacity: 0.7;
 }
 
-/* FLIPBOOK — MUST BE RELATIVE */
+/* FLIPBOOK */
 #flipbook {
   display: none;
-  position: relative;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
 }
 
-/* TURN.JS PAGE */
+/* PAGE */
 .page {
-  background-size: contain;
+  background-size: cover; /* IMPORTANT */
   background-position: center;
   background-repeat: no-repeat;
 }
@@ -107,12 +109,12 @@ body {
   <!-- BOOK COVER -->
   <div class="book" id="book">
     <div class="cover">
-      <img src="book-cover.png" alt="Cover" />
+      <img id="coverImg" src="book-cover.png" alt="Cover">
     </div>
     <div class="hint">Tap to open</div>
   </div>
 
-  <!-- FLIPBOOK -->
+  <!-- FLIPBOOK PAGES -->
   <div id="flipbook">
     <div class="page" style="background-image:url('jaipur.png')"></div>
     <div class="page" style="background-image:url('agra.png')"></div>
@@ -123,21 +125,42 @@ body {
 
 </div>
 
-<!-- REQUIRED SCRIPTS -->
+<!-- SCRIPTS -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="turn.min.js"></script>
 
 <script>
 const book = document.getElementById("book");
+const coverImg = document.getElementById("coverImg");
 const flipbook = document.getElementById("flipbook");
 
+let fixedBookWidth;
+let fixedBookHeight;
 let opened = false;
 
+/* LOCK BOOK SIZE ON LOAD */
+window.addEventListener("load", () => {
+  fixedBookHeight = window.innerHeight * 0.88;
+
+  const img = coverImg;
+  const ratio = img.naturalWidth / img.naturalHeight;
+
+  fixedBookWidth = fixedBookHeight * ratio;
+
+  img.style.height = fixedBookHeight + "px";
+  img.style.width = fixedBookWidth + "px";
+
+  book.style.width = fixedBookWidth + "px";
+  book.style.height = fixedBookHeight + "px";
+});
+
+/* FULLSCREEN */
 function goFullscreen() {
   if (document.fullscreenElement) return;
   document.documentElement.requestFullscreen?.();
 }
 
+/* OPEN BOOK */
 book.addEventListener("click", () => {
   if (opened) return;
   opened = true;
@@ -151,28 +174,23 @@ book.addEventListener("click", () => {
   }, 300);
 
   setTimeout(() => {
-    // fade cover, DO NOT remove from DOM
+    /* fade cover, keep layout */
     book.style.opacity = "0";
     book.style.pointerEvents = "none";
 
-    // show flipbook BEFORE init
+    /* show flipbook */
     flipbook.style.display = "block";
-
-    const bookWidth = book.offsetWidth;
-    const bookHeight = book.offsetHeight;
-
-    flipbook.style.width = bookWidth + "px";
-    flipbook.style.height = bookHeight + "px";
+    flipbook.style.width = fixedBookWidth + "px";
+    flipbook.style.height = fixedBookHeight + "px";
 
     $("#flipbook").turn({
-      width: bookWidth,
-      height: bookHeight,
+      width: fixedBookWidth,
+      height: fixedBookHeight,
       display: "single",
       autoCenter: true,
       duration: 900,
       gradients: true
     });
-
   }, 1100);
 });
 
