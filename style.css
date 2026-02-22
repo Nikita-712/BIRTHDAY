@@ -90,22 +90,3 @@ body{
   height: 100%;
   object-fit: contain;
 }
-/* 🔊 Mute button */
-.muteBtn{
-  position: fixed;
-  top: 14px;
-  right: 14px;
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  border: none;
-  background: rgba(0,0,0,0.55);
-  color: white;
-  font-size: 18px;
-  cursor: pointer;
-  z-index: 9999;
-}
-
-.muteBtn:hover{
-  background: rgba(0,0,0,0.8);
-}
