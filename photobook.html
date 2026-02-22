@@ -60,7 +60,7 @@ body {
 }
 
 .book.shift-right {
-  transform: translateX(260px);
+  transform: translateX(180px);
 }
 
 .book.open .cover {
@@ -97,6 +97,7 @@ body {
   opacity: 0;
   transform: translateX(80px);
   transition: transform 0.6s ease, opacity 0.4s ease;
+  cursor: zoom-in;
 }
 
 .slide.active {
@@ -110,6 +111,29 @@ body {
   transform: translateX(-80px);
   z-index: 1;
 }
+
+/* ---------- ZOOM ---------- */
+.slide.zoomed {
+  transform: scale(1.8);
+  cursor: grab;
+}
+
+.slide.zoomed:active {
+  cursor: grabbing;
+}
+
+/* ---------- NAV ZONES ---------- */
+.nav {
+  position: absolute;
+  top: 0;
+  width: 50%;
+  height: 100%;
+  z-index: 10;
+}
+
+.nav.left { left: 0; }
+.nav.right { right: 0; }
+
 </style>
 </head>
 
@@ -132,6 +156,10 @@ body {
     <div class="slide" style="background-image:url('udaipur.png')"></div>
     <div class="slide" style="background-image:url('us.png')"></div>
     <div class="slide" style="background-image:url('him.png')"></div>
+
+    <!-- Click zones -->
+    <div class="nav left"></div>
+    <div class="nav right"></div>
   </div>
 
 </div>
@@ -141,9 +169,12 @@ const book = document.getElementById("book");
 const coverImg = document.getElementById("coverImg");
 const flipbook = document.getElementById("flipbook");
 const slides = document.querySelectorAll(".slide");
+const navLeft = document.querySelector(".nav.left");
+const navRight = document.querySelector(".nav.right");
 
 let opened = false;
 let current = 0;
+let zoomed = false;
 
 /* ---------- COVER SIZE ---------- */
 window.addEventListener("load", () => {
@@ -165,13 +196,16 @@ function goFullscreen() {
 /* ---------- SLIDES ---------- */
 function showSlide(index) {
   slides.forEach((s, i) => {
-    s.classList.remove("active", "prev");
+    s.classList.remove("active", "prev", "zoomed");
+    s.style.transform = "";
     if (i === index) s.classList.add("active");
     if (i === index - 1) s.classList.add("prev");
   });
+  zoomed = false;
 }
 
 function nextSlide() {
+  if (zoomed) return;
   if (current < slides.length - 1) {
     current++;
     showSlide(current);
@@ -179,6 +213,7 @@ function nextSlide() {
 }
 
 function prevSlide() {
+  if (zoomed) return;
   if (current > 0) {
     current--;
     showSlide(current);
@@ -203,18 +238,33 @@ book.addEventListener("click", () => {
   }, 1100);
 });
 
-/* ---------- CLICK & SWIPE ---------- */
-document.addEventListener("click", e => {
+/* ---------- NAVIGATION ---------- */
+navRight.addEventListener("click", nextSlide);
+navLeft.addEventListener("click", prevSlide);
+
+document.addEventListener("keydown", e => {
   if (!opened) return;
-  nextSlide();
+  if (e.key === "ArrowRight") nextSlide();
+  if (e.key === "ArrowLeft") prevSlide();
 });
 
+/* ---------- ZOOM ---------- */
+slides.forEach(slide => {
+  slide.addEventListener("dblclick", e => {
+    slide.classList.toggle("zoomed");
+    zoomed = slide.classList.contains("zoomed");
+    slide.style.transformOrigin = "center center";
+  });
+});
+
+/* ---------- MOBILE SWIPE ---------- */
 let startX = 0;
 document.addEventListener("touchstart", e => {
   startX = e.touches[0].clientX;
 });
 
 document.addEventListener("touchend", e => {
+  if (zoomed) return;
   const diff = e.changedTouches[0].clientX - startX;
   if (diff < -40) nextSlide();
   if (diff > 40) prevSlide();
