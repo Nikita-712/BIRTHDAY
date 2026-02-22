@@ -15,29 +15,33 @@
 body {
   height: 100vh;
   background: url("photobook-bg.png") center/cover no-repeat;
-  display: flex;
-  justify-content: center;
-  align-items: center;
   overflow: hidden;
   font-family: serif;
 }
 
-/* SCENE */
+/* Scene */
 .scene {
+  position: relative;
   width: 100vw;
   height: 100vh;
-  position: relative;
 }
 
-/* BOOK COVER */
-.book {
+/* Center anchor */
+.center {
   position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* Closed book */
+.book {
+  position: relative;
   cursor: pointer;
   transition: transform 0.6s ease, opacity 0.4s ease;
-  z-index: 5;
 }
 
-/* backing plate */
+/* Back plate */
 .book::before {
   content: "";
   position: absolute;
@@ -47,7 +51,7 @@ body {
   z-index: -1;
 }
 
-/* cover */
+/* Cover */
 .cover {
   transform-origin: left center;
   transition: transform 0.9s ease;
@@ -59,17 +63,12 @@ body {
   box-shadow: 0 40px 80px rgba(0,0,0,0.35);
 }
 
-/* slide right before open */
-.book.shift-right {
-  transform: translateX(180px);
-}
-
-/* open animation */
+/* Opening animation */
 .book.open .cover {
   transform: rotateY(-160deg);
 }
 
-/* hint */
+/* Hint */
 .hint {
   position: absolute;
   bottom: -36px;
@@ -80,18 +79,14 @@ body {
   opacity: 0.7;
 }
 
-/* FLIPBOOK */
+/* Flipbook */
 #flipbook {
   display: none;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
 }
 
-/* PAGE - FIXED SIZING */
+/* Canva spreads */
 .page {
-  width: 50%;  /* Half container for double spread */
+  width: 100%;
   height: 100%;
   background-size: contain;
   background-position: center;
@@ -103,24 +98,26 @@ body {
 <body>
 
 <div class="scene">
+  <div class="center">
 
-  <!-- COVER -->
-  <div class="book" id="book">
-    <div class="cover">
-      <img id="coverImg" src="book-cover.png" alt="Cover">
+    <!-- COVER -->
+    <div class="book" id="book">
+      <div class="cover">
+        <img id="coverImg" src="book-cover.png" alt="Cover">
+      </div>
+      <div class="hint">Tap to open</div>
     </div>
-    <div class="hint">Tap to open</div>
-  </div>
 
-  <!-- FLIPBOOK (OPEN SPREADS) -->
-  <div id="flipbook">
-    <div class="page" style="background-image:url('jaipur.png')"></div>
-    <div class="page" style="background-image:url('agra.png')"></div>
-    <div class="page" style="background-image:url('udaipur.png')"></div>
-    <div class="page" style="background-image:url('us.png')"></div>
-    <div class="page" style="background-image:url('him.png')"></div>
-  </div>
+    <!-- PHOTOBOOK -->
+    <div id="flipbook">
+      <div class="page" style="background-image:url('jaipur.png')"></div>
+      <div class="page" style="background-image:url('agra.png')"></div>
+      <div class="page" style="background-image:url('udaipur.png')"></div>
+      <div class="page" style="background-image:url('us.png')"></div>
+      <div class="page" style="background-image:url('him.png')"></div>
+    </div>
 
+  </div>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -131,64 +128,67 @@ const book = document.getElementById("book");
 const coverImg = document.getElementById("coverImg");
 const flipbook = document.getElementById("flipbook");
 
-let bookWidth, bookHeight;
+let spreadWidth, spreadHeight;
 let opened = false;
 
-/* lock size */
+/* Lock size */
 window.addEventListener("load", () => {
-  bookHeight = window.innerHeight * 0.88;
+  spreadHeight = window.innerHeight * 0.88;
+
   const ratio = coverImg.naturalWidth / coverImg.naturalHeight;
-  bookWidth = bookHeight * ratio;
+  spreadWidth = spreadHeight * ratio;
 
-  coverImg.style.height = bookHeight + "px";
-  coverImg.style.width = bookWidth + "px";
+  coverImg.style.height = spreadHeight + "px";
+  coverImg.style.width = spreadWidth + "px";
 
-  book.style.width = bookWidth + "px";
-  book.style.height = bookHeight + "px";
+  book.style.width = spreadWidth + "px";
+  book.style.height = spreadHeight + "px";
 });
 
-/* fullscreen */
+/* Fullscreen */
 function goFullscreen() {
   if (!document.fullscreenElement) {
     document.documentElement.requestFullscreen?.();
   }
 }
 
-/* open book */
+/* Open */
 book.addEventListener("click", () => {
   if (opened) return;
   opened = true;
 
   goFullscreen();
-  book.classList.add("shift-right");
-
-  setTimeout(() => book.classList.add("open"), 300);
+  book.classList.add("open");
 
   setTimeout(() => {
     book.style.opacity = "0";
     book.style.pointerEvents = "none";
 
     flipbook.style.display = "block";
-    flipbook.style.width = bookWidth + "px";
-    flipbook.style.height = bookHeight + "px";
+    flipbook.style.width = spreadWidth + "px";
+    flipbook.style.height = spreadHeight + "px";
 
     $("#flipbook").turn({
-      width: bookWidth,
-      height: bookHeight,
-      display: "double",
-      autoCenter: false,
+      width: spreadWidth,
+      height: spreadHeight,
+      display: "single",   // ✅ IMPORTANT
+      autoCenter: true,
       duration: 900,
       gradients: true
-    }).turn("resize");  /* ✅ Forces correct sizing */
-
-  }, 1100);
+    });
+  }, 1000);
 });
 
-/* click to turn */
+/* Click navigation */
 flipbook.addEventListener("click", (e) => {
   const rect = flipbook.getBoundingClientRect();
   const x = e.clientX - rect.left;
-  x > rect.width / 2 ? $("#flipbook").turn("next") : $("#flipbook").turn("previous");
+
+  if (x > rect.width / 2) {
+    $("#flipbook").turn("next");
+  } else {
+    $("#flipbook").turn("previous");
+  }
 });
 </script>
 
