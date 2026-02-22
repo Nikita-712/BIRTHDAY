@@ -31,39 +31,26 @@ body {
   align-items: center;
 }
 
-/* ---------- BACK BUTTON ---------- */
-.backBtn{
-      position: fixed;
-      top: 18px;
-      left: 18px;
-      z-index: 9999;
+/* ---------- BACK ARROW ---------- */
+.back-btn {
+  position: fixed;
+  top: 18px;
+  left: 22px; /* moved to left */
+  z-index: 50;
+  padding: 8px 14px;
+  font-size: 16px;
+  color: #b03060; /* dark pink */
+  background: rgba(255, 210, 225, 0.45); /* glass pink */
+  backdrop-filter: blur(14px);
+  border-radius: 999px;
+  text-decoration: none;
+  box-shadow: 0 8px 24px rgba(176,48,96,0.25);
+  transition: transform 0.2s ease;
+}
 
-      width: 44px;
-      height: 44px;
-      border-radius: 999px;
-
-      display:flex;
-      align-items:center;
-      justify-content:center;
-
-      text-decoration: none;
-      font-size: 20px;
-      font-weight: 900;
-
-      background: rgba(255,255,255,0.10);
-      color: white;
-      border: 1px solid rgba(255,255,255,0.20);
-
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-
-      transition: transform 0.18s ease, background 0.18s ease;
-    }
-    .backBtn:hover{
-      transform: scale(1.06);
-      background: rgba(255,255,255,0.16);
-    }
-  
+.back-btn:hover {
+  transform: translateY(-1px);
+}
 
 /* ---------- COVER ---------- */
 .book {
@@ -80,7 +67,7 @@ body {
 
 .cover img {
   display: block;
-  border-radius: 12px;
+  border-radius: 14px;
   box-shadow: 0 40px 80px rgba(0,0,0,0.35);
 }
 
@@ -97,7 +84,7 @@ body {
   position: absolute;
   display: none;
   overflow: hidden;
-  border-radius: 14px;
+  border-radius: 16px;
 }
 
 /* ---------- SLIDES ---------- */
@@ -121,24 +108,24 @@ body {
   background-repeat: no-repeat;
 }
 
-/* ---------- TURN HINT (PURPLE, CUTE) ---------- */
+/* ---------- TURN HINT (PINK GLASS) ---------- */
 .turn-hint {
   position: absolute;
   bottom: 24px;
   left: 50%;
   transform: translateX(-50%);
-  padding: 9px 20px;
+  padding: 10px 22px;
   font-size: 13px;
-  color: #4b2a63; /* dark purple text */
-  background: rgba(216, 198, 238, 0.9); /* light purple */
-  backdrop-filter: blur(12px);
+  color: #b03060; /* dark pink */
+  background: rgba(255, 205, 220, 0.55); /* light pink glass */
+  backdrop-filter: blur(18px);
   border-radius: 999px;
   letter-spacing: 0.4px;
   opacity: 0;
   animation: hintFade 1.2s ease forwards, float 3s ease-in-out infinite;
   z-index: 20;
   pointer-events: none;
-  box-shadow: 0 10px 28px rgba(75,42,99,0.25);
+  box-shadow: 0 10px 28px rgba(176,48,96,0.25);
 }
 
 @keyframes hintFade {
@@ -146,9 +133,7 @@ body {
 }
 
 @keyframes float {
-  50% {
-    transform: translateX(-50%) translateY(-4px);
-  }
+  50% { transform: translateX(-50%) translateY(-4px); }
 }
 
 .turn-hint.hide {
@@ -177,18 +162,16 @@ body {
 
 <body>
 
-<a href="home.html" class="back-btn">← Back</a>
+<a href="home.html" class="back-btn">←</a>
 
 <div class="scene">
 
-  <!-- COVER -->
   <div class="book" id="book">
     <div class="cover">
       <img id="coverImg" src="book-cover.png">
     </div>
   </div>
 
-  <!-- FLIPBOOK -->
   <div id="flipbook">
 
     <div class="slide"><div class="slide-inner" style="background-image:url('jaipur.png')"></div></div>
@@ -220,9 +203,9 @@ let opened = false;
 let current = 0;
 let hintVisible = true;
 
-/* SIZE — SLIGHTLY BIGGER THAN BEFORE */
+/* SIZE — SAME AS PAGES, GAP TOP & BOTTOM */
 window.addEventListener("load", () => {
-  const h = window.innerHeight * 0.93; // 👈 fills space more
+  const h = window.innerHeight * 0.90; // 👈 half-cm gap feel
   const ratio = coverImg.naturalWidth / coverImg.naturalHeight;
   const pageWidth = h * ratio;
 
