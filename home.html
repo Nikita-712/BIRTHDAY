@@ -102,12 +102,36 @@
   width: 13%;
   height: 20%;
 }
+/* ===== MUSIC BUTTON ===== */
+.musicBtn{
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 9999;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.2);
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  color: white;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  backdrop-filter: blur(8px);
+  transition: background 0.3s ease, transform 0.2s ease;
+}
 
+.musicBtn:hover{
+  background: rgba(255,255,255,0.35);
+  transform: scale(1.05);
+}
   </style>
 </head>
 
 <body>
-
+<button id="musicBtn" class="musicBtn">🎵</button>
   <!-- fireworks -->
   <canvas id="fx"></canvas>
 
