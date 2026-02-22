@@ -166,12 +166,19 @@
   const video = document.getElementById("giftVideo");
   const overlay = document.getElementById("playOverlay");
 
-  /* ===== FULLSCREEN ON FIRST CLICK ===== */
-  document.addEventListener("click", () => {
-    if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen().catch(()=>{});
+ // ===== SAFE FULLSCREEN ON FIRST CLICK =====
+document.addEventListener("click", () => {
+  try {
+    if (
+      document.documentElement.requestFullscreen &&
+      !document.fullscreenElement
+    ) {
+      document.documentElement.requestFullscreen();
     }
-  }, { once: true });
+  } catch (e) {
+    // fullscreen not supported — silently ignore
+  }
+}, { once: true });
 
   /* ===== PLAY VIDEO ===== */
   overlay.addEventListener("click", (e) => {
