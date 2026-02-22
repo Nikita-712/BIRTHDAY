@@ -4,9 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Photobook</title>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="turn.min.js"></script>
-
 
 <style>
 * {
@@ -40,7 +37,7 @@ body {
   z-index: 5;
 }
 
-/* Backing plate (prevents white strip) */
+/* Backing plate */
 .book::before {
   content: "";
   position: absolute;
@@ -65,7 +62,7 @@ body {
   backface-visibility: hidden;
 }
 
-/* Slide right before opening */
+/* Slide right */
 .book.shift-right {
   transform: translateX(180px);
 }
@@ -113,7 +110,7 @@ body {
     <div class="hint">Tap to open</div>
   </div>
 
-  <!-- PAGES -->
+  <!-- PHOTOBOOK -->
   <div id="flipbook">
     <div class="page" style="background-image:url('jaipur.png')"></div>
     <div class="page" style="background-image:url('agra.png')"></div>
@@ -122,6 +119,10 @@ body {
     <div class="page" style="background-image:url('him.png')"></div>
   </div>
 </div>
+
+<!-- ✅ REQUIRED SCRIPTS (ONCE, CORRECT ORDER) -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/turn.js/4.1.0/turn.min.js"></script>
 
 <script>
 const book = document.getElementById("book");
@@ -150,7 +151,6 @@ function goFullscreen() {
 /* Open book */
 book.addEventListener("click", () => {
   goFullscreen();
-
   book.classList.add("shift-right");
 
   setTimeout(() => {
@@ -183,21 +183,7 @@ flipbook.addEventListener("click", (e) => {
     $("#flipbook").turn("previous");
   }
 });
-
-/* Future close handler (recenters book) */
-function closeBook() {
-  $("#flipbook").turn("destroy");
-  flipbook.style.display = "none";
-
-  book.style.display = "block";
-  book.classList.remove("open");
-
-  setTimeout(() => {
-    book.classList.remove("shift-right");
-  }, 50);
-}
 </script>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/turn.js/4.1.0/turn.min.js"></script>
+
 </body>
 </html>
