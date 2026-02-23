@@ -172,3 +172,70 @@ html, body {
   transition: opacity .5s; white-space: nowrap;
 }
 .hint.hidden { opacity: 0; }
+
+/* ── Sparkle particles ── */
+.sparkle {
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  border-radius: 50%;
+  transform: translate(-50%, -50%) scale(1);
+  animation: sparkle-fade 700ms ease-out forwards;
+}
+
+@keyframes sparkle-fade {
+  0%   { transform: translate(-50%, -50%) scale(1);   opacity: 1; }
+  100% { transform: translate(-50%, -50%) scale(0);   opacity: 0; }
+}
+
+/* Star-shape sparkle using clip-path */
+.sparkle.star {
+  border-radius: 0;
+  clip-path: polygon(
+    50% 0%, 61% 35%, 98% 35%, 68% 57%,
+    79% 91%, 50% 70%, 21% 91%, 32% 57%,
+    2% 35%, 39% 35%
+  );
+  animation: sparkle-star 750ms ease-out forwards;
+}
+
+@keyframes sparkle-star {
+  0%   { transform: translate(-50%, -50%) scale(1)   rotate(0deg);   opacity: 1; }
+  100% { transform: translate(-50%, -50%) scale(0)   rotate(90deg);  opacity: 0; }
+}
+
+/* Trailing dot */
+.sparkle.dot {
+  animation: sparkle-dot 500ms ease-out forwards;
+}
+@keyframes sparkle-dot {
+  0%   { transform: translate(-50%, -50%) scale(1);  opacity: .9; }
+  100% { transform: translate(-50%, -50%) scale(0) translateY(-12px); opacity: 0; }
+}
+
+/* ── Sparkle particles ── */
+.sparkle {
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  border-radius: 50%;
+  transform: translate(-50%, -50%) scale(1);
+  animation: sparkle-fade 700ms ease-out forwards;
+}
+
+@keyframes sparkle-fade {
+  0%   { opacity: 1;   transform: translate(-50%, -50%) scale(1)   rotate(0deg);   }
+  100% { opacity: 0;   transform: translate(-50%, -50%) scale(0)   rotate(180deg); }
+}
+
+/* Star shape variant */
+.sparkle.star {
+  border-radius: 0;
+  background: none !important;
+  animation: star-fade 750ms ease-out forwards;
+}
+
+@keyframes star-fade {
+  0%   { opacity: 1; transform: translate(-50%, -50%) scale(1) rotate(0deg);   }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(0) rotate(220deg); }
+}
