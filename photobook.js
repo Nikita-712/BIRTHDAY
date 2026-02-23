@@ -258,3 +258,196 @@ window.addEventListener('resize', () => {
 // ─── INIT ────────────────────────────────────────────────────
 applySize();
 initClosed();
+
+// ─── SPARKLE MAGIC WAND EFFECT ───────────────────────────────
+(function () {
+  // Warm romantic palette matching the scrapbook aesthetic
+  const COLOURS = [
+    '#f9d6e3', // blush pink
+    '#fce4a0', // warm gold
+    '#f7b2c1', // rose
+    '#fff0a0', // champagne yellow
+    '#e8c4f0', // lavender
+    '#ffd6b0', // peach
+    '#ffffff',  // white
+    '#f4c2d8', // dusty pink
+  ];
+
+  const SHAPES = ['star', 'dot', 'dot', 'star']; // weighted – more dots for trail feel
+
+  let lastX = -999, lastY = -999;
+  let frameId = null;
+  let mouseX = 0, mouseY = 0;
+  let active = false;
+
+  function randomBetween(a, b) { return a + Math.random() * (b - a); }
+
+  function spawnSparkle(x, y) {
+    const el    = document.createElement('div');
+    const shape = SHAPES[Math.floor(Math.random() * SHAPES.length)];
+    const colour = COLOURS[Math.floor(Math.random() * COLOURS.length)];
+    const size  = shape === 'star'
+      ? randomBetween(8, 18)
+      : randomBetween(3, 7);
+
+    // Scatter a bit around cursor so it feels like a trail burst
+    const ox = randomBetween(-14, 14);
+    const oy = randomBetween(-14, 14);
+
+    el.className  = `sparkle ${shape}`;
+    el.style.cssText = `
+      left: ${x + ox}px;
+      top:  ${y + oy}px;
+      width:  ${size}px;
+      height: ${size}px;
+      background: ${colour};
+      box-shadow: 0 0 ${size * 1.2}px ${colour};
+      animation-duration: ${randomBetween(450, 800)}ms;
+    `;
+
+    document.body.appendChild(el);
+    el.addEventListener('animationend', () => el.remove(), { once: true });
+  }
+
+  function onMove(e) {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+
+    const dx = mouseX - lastX;
+    const dy = mouseY - lastY;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+
+    // Only emit when cursor actually moves enough
+    if (dist < 6) return;
+
+    lastX = mouseX;
+    lastY = mouseY;
+    active = true;
+
+    // Emit 2–4 sparkles per move event depending on speed
+    const count = dist > 25 ? 4 : dist > 12 ? 3 : 2;
+    for (let i = 0; i < count; i++) spawnSparkle(mouseX, mouseY);
+  }
+
+  // Touch support (mobile)
+  function onTouch(e) {
+    const t = e.touches[0];
+    onMove({ clientX: t.clientX, clientY: t.clientY });
+  }
+
+  document.addEventListener('mousemove', onMove, { passive: true });
+  document.addEventListener('touchmove', onTouch,  { passive: true });
+})();
+
+// ─── SPARKLE MAGIC WAND ──────────────────────────────────────
+(function () {
+  // Warm, romantic colour palette matching the scrapbook aesthetic
+  const COLOURS = [
+    '#f9d6e0', '#f7b2c1', '#fce4b0', '#f9c96e',
+    '#fff0a0', '#e8c4f0', '#c4d4f7', '#ffffff',
+    '#ffd6a5', '#ffb3c6',
+  ];
+
+  // SVG star path (4-point)
+  const STAR_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+    <polygon points="10,1 12.5,8.5 20,8.5 14,13 16.5,20 10,15.5 3.5,20 6,13 0,8.5 7.5,8.5"
+             fill="currentColor"/>
+  </svg>`;
+
+  let lastX = -999, lastY = -999;
+  let frameId = null;
+  let mouseX = 0, mouseY = 0;
+
+  function randomBetween(a, b) {
+    return a + Math.random() * (b - a);
+  }
+
+  function spawnParticle(x, y) {
+    const colour = COLOURS[Math.floor(Math.random() * COLOURS.length)];
+    const isStar = Math.random() > 0.45;
+    const size   = randomBetween(isStar ? 10 : 4, isStar ? 18 : 10);
+    const dx     = randomBetween(-28, 28);
+    const dy     = randomBetween(-32, 8);
+    const dur    = randomBetween(500, 850);
+
+    const el = document.createElement('div');
+    el.classList.add('sparkle');
+
+    if (isStar) {
+      el.classList.add('star');
+      el.style.width  = size + 'px';
+      el.style.height = size + 'px';
+      el.style.color  = colour;
+      el.innerHTML    = STAR_SVG;
+      // drop-shadow glow
+      el.style.filter = `drop-shadow(0 0 3px ${colour})`;
+    } else {
+      el.style.width      = size + 'px';
+      el.style.height     = size + 'px';
+      el.style.background = colour;
+      el.style.boxShadow  = `0 0 ${size}px ${colour}`;
+    }
+
+    el.style.left              = x + 'px';
+    el.style.top               = y + 'px';
+    el.style.animationDuration = dur + 'ms';
+
+    // Give each particle a random drift via CSS custom properties
+    el.style.setProperty('--dx', dx + 'px');
+    el.style.setProperty('--dy', dy + 'px');
+
+    // Apply drift via inline keyframe override using translate addition
+    // We animate in JS for flexibility
+    document.body.appendChild(el);
+
+    // Drift the element while it fades (JS-driven position)
+    const start = performance.now();
+    const startX = x, startY = y;
+
+    function drift(now) {
+      const t = Math.min(1, (now - start) / dur);
+      el.style.left = (startX + dx * t) + 'px';
+      el.style.top  = (startY + dy * t) + 'px';
+      if (t < 1) requestAnimationFrame(drift);
+    }
+    requestAnimationFrame(drift);
+
+    // Remove after animation
+    setTimeout(() => el.remove(), dur + 50);
+  }
+
+  function spawnBurst(x, y) {
+    const count = Math.floor(randomBetween(2, 5));
+    for (let i = 0; i < count; i++) {
+      // Slight spread around cursor
+      const ox = randomBetween(-6, 6);
+      const oy = randomBetween(-6, 6);
+      spawnParticle(x + ox, y + oy);
+    }
+  }
+
+  // Throttle: only spawn when mouse moves enough
+  const MIN_DIST = 12;   // px between spawns
+
+  document.addEventListener('mousemove', e => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+
+    const dx = mouseX - lastX;
+    const dy = mouseY - lastY;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+
+    if (dist > MIN_DIST) {
+      lastX = mouseX;
+      lastY = mouseY;
+      spawnBurst(mouseX, mouseY);
+    }
+  });
+
+  // Extra burst on click for delight
+  document.addEventListener('click', e => {
+    for (let i = 0; i < 10; i++) {
+      setTimeout(() => spawnParticle(e.clientX, e.clientY), i * 30);
+    }
+  });
+})();
