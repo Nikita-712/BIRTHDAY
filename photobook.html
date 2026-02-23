@@ -6,6 +6,17 @@
 <title>Photobook</title>
 
 <style>
+  /* --- IMAGE ZOOM (OPTION 1) --- */
+.slide-inner {
+  transition: transform 0.35s ease;
+  cursor: zoom-in;
+}
+
+.slide.zoomed .slide-inner {
+  transform: scale(1.8);
+  cursor: zoom-out;
+  z-index: 5;
+}
 * {
   margin: 0;
   padding: 0;
@@ -351,6 +362,14 @@ book.addEventListener("click", () => {
 /* NAV */
 navRight.onclick = next;
 navLeft.onclick = prev;
+  /* --- ZOOM IN PLACE (OPTION 1) --- */
+slides.forEach(slide => {
+  slide.addEventListener("click", () => {
+    // only zoom active slide
+    if (!slide.classList.contains("active")) return;
+    slide.classList.toggle("zoomed");
+  });
+});
 </script>
 
 </body>
